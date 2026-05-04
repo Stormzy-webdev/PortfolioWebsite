@@ -1,0 +1,289 @@
+/* =========================
+   EXISTING STYLES (UNCHANGED)
+   ========================= */
+
+@font-face {
+  font-family: 'RetroFont';
+  src: url('/public/fonts/SAIBA-45.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+/* 🌐 2. Global styles */
+body {
+  margin: 0;
+  font-family: 'RetroFont', sans-serif;
+  background: black;
+}
+
+
+.counter {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+  margin-bottom: 24px;
+}
+
+.counter:hover {
+  border-color: var(--accent-border);
+}
+
+.counter:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* NOTE: your nested CSS here is fine if your setup supports it */
+
+.hero {
+  position: relative;
+}
+
+.hero .base,
+.hero .framework,
+.hero .vite {
+  inset-inline: 0;
+  margin: 0 auto;
+}
+
+.hero .base {
+  width: 170px;
+  position: relative;
+  z-index: 0;
+}
+
+.hero .framework,
+.hero .vite {
+  position: absolute;
+}
+
+.hero .framework {
+  z-index: 1;
+  top: 34px;
+  height: 28px;
+  transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg) scale(1.4);
+}
+
+.hero .vite {
+  z-index: 0;
+  top: 107px;
+  height: 26px;
+  width: auto;
+  transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg) scale(0.8);
+}
+
+#center {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  place-content: center;
+  place-items: center;
+  flex-grow: 1;
+}
+
+@media (max-width: 1024px) {
+  #center {
+    padding: 32px 20px 24px;
+    gap: 18px;
+  }
+}
+
+#next-steps {
+  display: flex;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+#next-steps>div {
+  flex: 1 1 0;
+  padding: 32px;
+}
+
+@media (max-width: 1024px) {
+  #next-steps>div {
+    padding: 24px 20px;
+  }
+}
+
+#next-steps .icon {
+  margin-bottom: 16px;
+  width: 22px;
+  height: 22px;
+}
+
+@media (max-width: 1024px) {
+  #next-steps {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+#docs {
+  border-right: 1px solid var(--border);
+}
+
+@media (max-width: 1024px) {
+  #docs {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+#next-steps ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  margin: 32px 0 0;
+}
+
+#next-steps ul .logo {
+  height: 18px;
+}
+
+#next-steps ul a {
+  color: var(--text-h);
+  font-size: 16px;
+  border-radius: 6px;
+  background: var(--social-bg);
+  display: flex;
+  padding: 6px 12px;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: box-shadow 0.3s;
+}
+
+#next-steps ul a:hover {
+  box-shadow: var(--shadow);
+}
+
+#next-steps ul .button-icon {
+  height: 18px;
+  width: 18px;
+}
+
+#spacer {
+  height: 88px;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 1024px) {
+  #spacer {
+    height: 48px;
+  }
+}
+
+.ticks {
+  position: relative;
+  width: 100%;
+}
+
+.ticks::before,
+.ticks::after {
+  content: '';
+  position: absolute;
+  top: -4.5px;
+  border: 5px solid transparent;
+}
+
+.ticks::before {
+  left: 0;
+  border-left-color: var(--border);
+}
+
+.ticks::after {
+  right: 0;
+  border-right-color: var(--border);
+}
+
+/* =========================
+   🎮 3D PORTFOLIO UI (FIXED)
+   ========================= */
+
+/* 🌐 wrapper for React app + canvas */
+.scene-wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+/* 🎮 overlay container */
+.overlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transform: translateY(80px);
+  z-index: 10;
+}
+
+/* 🎯 start button */
+.start-button {
+  padding: 20px 70px;
+  font-size: 35px;
+  font-family: 'RetroFont', sans-serif !important;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+
+  background: hwb(307 0% 71%);
+  color: #3dd800;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  opacity: 0;
+  transform: scale(0.8);
+  animation: fadePop 0.8s ease forwards;
+}
+
+/* ✨ animation */
+@keyframes fadePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.monitor-ui {
+  position: absolute;
+  top: 34%;
+  left: 17%;
+  width: min(360px, 42vw);
+  padding: 18px 20px;
+  border: 2px solid #3dd800;
+  border-radius: 12px;
+  background: rgba(8, 8, 8, 0.9);
+  color: #e7ffe0;
+  z-index: 15;
+  pointer-events: auto;
+}
+
+.monitor-ui h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+}
+
+.monitor-ui p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
