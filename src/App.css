@@ -228,21 +228,99 @@ body {
 
 /* 🎯 start button */
 .start-button {
+  --cp-primary: #5bff7a;
+  --cp-accent: #16c74f;
+  --cp-bg: rgba(4, 8, 18, 0.88);
+  --cp-ink: #e7ffe8;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: 20px 70px;
   font-size: 35px;
   font-family: 'RetroFont', sans-serif !important;
-  border-radius: 10px;
-  border: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 12px;
+  border: 1px solid var(--cp-primary);
   cursor: pointer;
 
-  background: hwb(307 0% 71%);
-  color: #3dd800;
-
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background:
+    linear-gradient(120deg, rgba(91, 255, 122, 0.18), rgba(22, 199, 79, 0.12)),
+    var(--cp-bg);
+  color: var(--cp-ink);
+  text-shadow: 0 0 10px rgba(91, 255, 122, 0.85), 0 0 22px rgba(22, 199, 79, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(91, 255, 122, 0.25) inset,
+    0 0 18px rgba(91, 255, 122, 0.3),
+    0 0 34px rgba(22, 199, 79, 0.22);
 
   opacity: 0;
   transform: scale(0.8);
   animation: fadePop 0.8s ease forwards;
+  transition: transform 180ms ease, box-shadow 200ms ease, filter 200ms ease;
+}
+
+.start-button span {
+  position: relative;
+  z-index: 3;
+}
+
+.start-button::before,
+.start-button::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  letter-spacing: inherit;
+  pointer-events: none;
+  opacity: 0.28;
+  animation-duration: 3.4s;
+  animation-timing-function: steps(2, end);
+  animation-iteration-count: infinite;
+}
+
+.start-button::before {
+  color: var(--cp-primary);
+  transform: translate(0);
+  z-index: 1;
+  animation-name: glitch-left;
+}
+
+.start-button::after {
+  color: var(--cp-accent);
+  transform: translate(0);
+  z-index: 2;
+  animation-name: glitch-right;
+}
+
+.start-button:hover,
+.start-button:focus-visible {
+  transform: translateY(-2px) scale(1.02);
+  filter: saturate(1.2);
+  box-shadow:
+    0 0 0 1px rgba(91, 255, 122, 0.4) inset,
+    0 0 22px rgba(91, 255, 122, 0.5),
+    0 0 42px rgba(22, 199, 79, 0.36);
+}
+
+.start-button:hover::before,
+.start-button:focus-visible::before {
+  opacity: 0.8;
+  animation-duration: 420ms;
+}
+
+.start-button:hover::after,
+.start-button:focus-visible::after {
+  opacity: 0.85;
+  animation-duration: 500ms;
+}
+
+.start-button:focus-visible {
+  outline: 2px solid var(--cp-accent);
+  outline-offset: 4px;
 }
 
 /* ✨ animation */
@@ -261,6 +339,22 @@ body {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+@keyframes glitch-left {
+  0% { clip-path: inset(12% 0 70% 0); transform: translate(-1px, -1px); }
+  25% { clip-path: inset(64% 0 12% 0); transform: translate(2px, 1px); }
+  50% { clip-path: inset(36% 0 35% 0); transform: translate(-3px, 0); }
+  75% { clip-path: inset(78% 0 2% 0); transform: translate(2px, -1px); }
+  100% { clip-path: inset(10% 0 73% 0); transform: translate(-1px, 1px); }
+}
+
+@keyframes glitch-right {
+  0% { clip-path: inset(70% 0 8% 0); transform: translate(1px, 1px); }
+  25% { clip-path: inset(18% 0 62% 0); transform: translate(-2px, 0); }
+  50% { clip-path: inset(46% 0 30% 0); transform: translate(2px, -1px); }
+  75% { clip-path: inset(6% 0 80% 0); transform: translate(-1px, 1px); }
+  100% { clip-path: inset(60% 0 16% 0); transform: translate(1px, -1px); }
 }
 
 .monitor-ui {
