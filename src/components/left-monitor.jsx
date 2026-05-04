@@ -7,7 +7,36 @@ const SCREEN_UI_POSITION = [0, 0, 0.00]
 const SCREEN_UI_ROTATION = [0, Math.PI / 1.72, 0]
 const SCREEN_UI_SCALE = 0.05
 
-export default function LeftMonitor({ uiVisible = false, ...props }) {
+const MATRIX_CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*+-<>'
+const MATRIX_COLUMN_COUNT = 18
+
+function MatrixIdle() {
+  const columns = useMemo(() => {
+    return Array.from({ length: MATRIX_COLUMN_COUNT }, (_, i) => {
+      let text = ''
+      for (let j = 0; j < 28; j += 1) {
+        text += MATRIX_CHARS[(i * 7 + j * 11) % MATRIX_CHARS.length]
+      }
+      return { text, delay: (i % 6) * -0.6, duration: 3.2 + (i % 5) * 0.45 }
+    })
+  }, [])
+
+  return (
+    <div className="matrix-idle" aria-hidden="true">
+      {columns.map((column, index) => (
+        <span
+          key={index}
+          className="matrix-column"
+          style={{ '--delay': `${column.delay}s`, '--duration': `${column.duration}s` }}
+        >
+          {column.text}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+export default function LeftMonitor({ idleVisible = false, uiVisible = false, booting = false, ...props }) {
   const group = useRef()
 
   const { nodes, scene } = useGLTF('/models/left-monitor.glb')
@@ -30,8 +59,8 @@ export default function LeftMonitor({ uiVisible = false, ...props }) {
     () =>
       new THREE.MeshStandardMaterial({
         color: '#050505',
-        emissive: new THREE.Color('#00f5ff'),
-        emissiveIntensity: 1.4,
+        emissive: new THREE.Color('#1fff6f'),
+        emissiveIntensity: 0.62,
         metalness: 0.2,
         roughness: 0.3,
         side: THREE.FrontSide,
@@ -59,14 +88,18 @@ export default function LeftMonitor({ uiVisible = false, ...props }) {
             scale={screen.scale}
           >
             <primitive object={screenMaterial} attach="material" />
-            {uiVisible && (
+            {(idleVisible || booting || uiVisible) && (
               <Html
                 transform
                 position={SCREEN_UI_POSITION}
                 rotation={SCREEN_UI_ROTATION}
                 scale={SCREEN_UI_SCALE}
               >
-                <MonitorUI />
+                <div className="monitor-screen-shell">
+                  {idleVisible && <MatrixIdle />}
+                  {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
+                  <MonitorUI visible={uiVisible} />
+                </div>
               </Html>
             )}
           </mesh>

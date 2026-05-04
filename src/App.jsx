@@ -78,11 +78,26 @@ function CameraZoomController({ controlsRef, shouldZoom, onZoomComplete }) {
 function App() {
   const controlsRef = useRef()
   const [started, setStarted] = useState(false)
+  const [monitorBooting, setMonitorBooting] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
 
   const handleStart = () => {
     setStarted(true)
   }
+
+  useEffect(() => {
+    let bootTimer
+    if (monitorBooting) {
+      bootTimer = setTimeout(() => {
+        setMonitorBooting(false)
+        setShowMonitorUI(true)
+      }, 900)
+    }
+
+    return () => {
+      if (bootTimer) clearTimeout(bootTimer)
+    }
+  }, [monitorBooting])
 
   return (
     <div className="scene-wrapper">
@@ -113,13 +128,19 @@ function App() {
 
         <Suspense fallback={null}>
           <SetupModel />
-          <LeftMonitor position={[0, 0, 0]} scale={1} uiVisible={showMonitorUI} />
+          <LeftMonitor
+            position={[0, 0, 0]}
+            scale={1}
+            idleVisible={!started}
+            uiVisible={showMonitorUI}
+            booting={monitorBooting}
+          />
         </Suspense>
 
         <CameraZoomController
           controlsRef={controlsRef}
           shouldZoom={started}
-          onZoomComplete={() => setShowMonitorUI(true)}
+          onZoomComplete={() => setMonitorBooting(true)}
         />
 
         <OrbitControls

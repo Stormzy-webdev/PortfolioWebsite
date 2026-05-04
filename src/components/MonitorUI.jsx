@@ -15,33 +15,37 @@ const sections = {
   },
 }
 
-export default function MonitorUI() {
+export default function MonitorUI({ visible = false }) {
   const [activeTab, setActiveTab] = useState('about')
   const active = useMemo(() => sections[activeTab], [activeTab])
 
   return (
-    <div
-      style={{
-        width: '416px',
-        height: '267px',
-        background: 'linear-gradient(180deg, #101820 0%, #0b1117 100%)',
-        color: '#b7ffbf',
-        border: '2px solid #39ff14',
-        borderRadius: '1px',
-        padding: '12px',
-        boxSizing: 'border-box',
-        fontFamily: 'monospace',
-      }}
-    >
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
-        <button onClick={() => setActiveTab('about')}>About</button>
-        <button onClick={() => setActiveTab('projects')}>Projects</button>
-        <button onClick={() => setActiveTab('contact')}>Contact</button>
+    <div className={`monitor-ui-panel ${visible ? 'monitor-ui-visible' : ''}`}>
+      <div className="monitor-tabs">
+        <button
+          className={`monitor-tab ${activeTab === 'about' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('about')}
+        >
+          About
+        </button>
+        <button
+          className={`monitor-tab ${activeTab === 'projects' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('projects')}
+        >
+          Projects
+        </button>
+        <button
+          className={`monitor-tab ${activeTab === 'contact' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('contact')}
+        >
+          Contact
+        </button>
       </div>
 
-      <h3 style={{ margin: 0, fontSize: '16px' }}>{active.title}</h3>
-      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: 1.45 }}>{active.body}</p>
+      <h3 className="monitor-title" data-text={active.title}>
+        {active.title}
+      </h3>
+      <p className="monitor-copy">{active.body}</p>
     </div>
   )
 }
-
