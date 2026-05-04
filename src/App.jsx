@@ -88,8 +88,8 @@ function App() {
     <div className="scene-wrapper">
       {!started && (
         <div className="overlay">
-          <button className="start-button" onClick={handleStart}>
-            Start
+          <button className="start-button" data-text="Start" onClick={handleStart}>
+            <span>Start</span>
           </button>
         </div>
       )}
