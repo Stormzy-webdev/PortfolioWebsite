@@ -131,7 +131,7 @@ function App() {
           <LeftMonitor
             position={[0, 0, 0]}
             scale={1}
-            idleVisible={!started}
+            idleVisible={!monitorBooting && !showMonitorUI}
             uiVisible={showMonitorUI}
             booting={monitorBooting}
           />
