@@ -36,7 +36,14 @@ function MatrixIdle() {
   )
 }
 
-export default function LeftMonitor({ idleVisible = false, uiVisible = false, booting = false, ...props }) {
+export default function LeftMonitor({
+  idleVisible = false,
+  uiVisible = false,
+  booting = false,
+  onTabChange,
+  onProjectHover,
+  ...props
+}) {
   const group = useRef()
 
   const { nodes, scene } = useGLTF('/models/left-monitor.glb')
@@ -98,7 +105,11 @@ export default function LeftMonitor({ idleVisible = false, uiVisible = false, bo
                 <div className="monitor-screen-shell">
                   {idleVisible && <MatrixIdle />}
                   {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
-                  <MonitorUI visible={uiVisible} />
+                  <MonitorUI
+                    visible={uiVisible}
+                    onTabChange={onTabChange}
+                    onProjectHover={onProjectHover}
+                  />
                 </div>
               </Html>
             )}

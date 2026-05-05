@@ -6,9 +6,17 @@ import SetupModel from './components/SetupModel.jsx'
 import LeftMonitor from './components/left-monitor.jsx'
 import './App.css'
 
-// 🎯 Replace these AFTER pressing "P" and copying from console
-const LEFT_MONITOR_CAMERA_POSITION = [0.28, 1.01, 0.53]
-const LEFT_MONITOR_TARGET = [-1.05, 1.00, 0.73]
+const CAMERA_PRESETS = {
+  leftMonitor: {
+    position: [0.28, 1.01, 0.53],
+    target: [-1.05, 1.0, 0.73],
+  },
+  projectsOverview: {
+    // Replace using values captured with the "P" key.
+    position: [1.25, 1.15, 1.7],
+    target: [0.0, 0.95, 0.55],
+  },
+}
 
 const ZOOM_LERP_FACTOR = 0.025
 const ZOOM_COMPLETE_THRESHOLD = 0.02
@@ -18,14 +26,21 @@ function Fog() {
   return <fog attach="fog" args={['#1b2230', 5, 12]} />
 }
 
-function CameraZoomController({ controlsRef, shouldZoom, onZoomComplete }) {
+function CameraZoomController({
+  controlsRef,
+  shouldZoom,
+  goalPosition,
+  goalTarget,
+  onZoomComplete,
+}) {
   const { camera } = useThree()
   const hasCompletedZoom = useRef(false)
+  const lastGoalKey = useRef('')
 
-  const targetPosition = useRef(new THREE.Vector3(...LEFT_MONITOR_CAMERA_POSITION))
-  const targetLookAt = useRef(new THREE.Vector3(...LEFT_MONITOR_TARGET))
+  const targetPosition = useRef(new THREE.Vector3(...goalPosition))
+  const targetLookAt = useRef(new THREE.Vector3(...goalTarget))
 
-  // ✅ DEBUG KEY (PRESS "P")
+  // Debug helper: press "P" to copy camera + target values.
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key.toLowerCase() === 'p') {
@@ -50,6 +65,16 @@ function CameraZoomController({ controlsRef, shouldZoom, onZoomComplete }) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [camera, controlsRef])
 
+  useEffect(() => {
+    const newGoalKey = `${goalPosition.join(',')}|${goalTarget.join(',')}`
+    if (lastGoalKey.current !== newGoalKey) {
+      targetPosition.current.set(...goalPosition)
+      targetLookAt.current.set(...goalTarget)
+      hasCompletedZoom.current = false
+      lastGoalKey.current = newGoalKey
+    }
+  }, [goalPosition, goalTarget])
+
   useFrame(() => {
     if (!shouldZoom || hasCompletedZoom.current) return
 
@@ -68,7 +93,7 @@ function CameraZoomController({ controlsRef, shouldZoom, onZoomComplete }) {
       targetDistance < ZOOM_COMPLETE_THRESHOLD
     ) {
       hasCompletedZoom.current = true
-      onZoomComplete()
+      onZoomComplete?.()
     }
   })
 
@@ -80,9 +105,19 @@ function App() {
   const [started, setStarted] = useState(false)
   const [monitorBooting, setMonitorBooting] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
+  const [cameraMode, setCameraMode] = useState('leftMonitor')
+  const [activeProjectPreview, setActiveProjectPreview] = useState('3D Portfolio (selected)')
 
   const handleStart = () => {
     setStarted(true)
+  }
+
+  const handleMonitorTabChange = (tab) => {
+    if (tab === 'projects') {
+      setCameraMode('projectsOverview')
+      return
+    }
+    setCameraMode('leftMonitor')
   }
 
   useEffect(() => {
@@ -134,18 +169,24 @@ function App() {
             idleVisible={!monitorBooting && !showMonitorUI}
             uiVisible={showMonitorUI}
             booting={monitorBooting}
+            onTabChange={handleMonitorTabChange}
+            onProjectHover={setActiveProjectPreview}
           />
         </Suspense>
 
         <CameraZoomController
           controlsRef={controlsRef}
           shouldZoom={started}
-          onZoomComplete={() => setMonitorBooting(true)}
+          goalPosition={CAMERA_PRESETS[cameraMode].position}
+          goalTarget={CAMERA_PRESETS[cameraMode].target}
+          onZoomComplete={() => {
+            if (!showMonitorUI) setMonitorBooting(true)
+          }}
         />
 
         <OrbitControls
           ref={controlsRef}
-          target={[0.72, 0.37, 0.2]} // You can adjust this later
+          target={[0.72, 0.37, 0.2]}
           enableDamping
           dampingFactor={0.05}
           enablePan={!LOCK_CAMERA_AFTER_ZOOM || !showMonitorUI}
@@ -153,6 +194,9 @@ function App() {
           enableRotate={!LOCK_CAMERA_AFTER_ZOOM || !showMonitorUI}
         />
       </Canvas>
+      {showMonitorUI && cameraMode === 'projectsOverview' && (
+        <div className="project-preview-hint">Preview selected: {activeProjectPreview}</div>
+      )}
     </div>
   )
 }

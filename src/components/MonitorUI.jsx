@@ -7,7 +7,7 @@ const sections = {
   },
   projects: {
     title: 'Projects',
-    body: 'Portfolio Website, 3D Product Showcase, and a clean e-commerce UI with custom animations.',
+    body: '',
   },
   contact: {
     title: 'Contact',
@@ -15,28 +15,48 @@ const sections = {
   },
 }
 
-export default function MonitorUI({ visible = false }) {
+const projectGroups = [
+  {
+    heading: 'Featured',
+    items: ['3D Portfolio (selected)'],
+  },
+  {
+    heading: 'Social Media Apps',
+    items: ['Social Feed App', 'Messaging UI Clone', 'Dashboard App'],
+  },
+  {
+    heading: '3D Models',
+    items: ['Small Tool 1', 'Small Tool 2'],
+  },
+]
+
+export default function MonitorUI({ visible = false, onTabChange, onProjectHover }) {
   const [activeTab, setActiveTab] = useState('about')
   const active = useMemo(() => sections[activeTab], [activeTab])
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab)
+    onTabChange?.(tab)
+  }
 
   return (
     <div className={`monitor-ui-panel ${visible ? 'monitor-ui-visible' : ''}`}>
       <div className="monitor-tabs">
         <button
           className={`monitor-tab ${activeTab === 'about' ? 'is-active' : ''}`}
-          onClick={() => setActiveTab('about')}
+          onClick={() => handleTabChange('about')}
         >
           About
         </button>
         <button
           className={`monitor-tab ${activeTab === 'projects' ? 'is-active' : ''}`}
-          onClick={() => setActiveTab('projects')}
+          onClick={() => handleTabChange('projects')}
         >
           Projects
         </button>
         <button
           className={`monitor-tab ${activeTab === 'contact' ? 'is-active' : ''}`}
-          onClick={() => setActiveTab('contact')}
+          onClick={() => handleTabChange('contact')}
         >
           Contact
         </button>
@@ -45,7 +65,30 @@ export default function MonitorUI({ visible = false }) {
       <h3 className="monitor-title" data-text={active.title}>
         {active.title}
       </h3>
-      <p className="monitor-copy">{active.body}</p>
+
+      {activeTab === 'projects' ? (
+        <div className="monitor-projects" aria-label="Project categories">
+          {projectGroups.map((group) => (
+            <section className="project-group" key={group.heading}>
+              <h4 className="project-heading">[{group.heading}]</h4>
+              {group.items.map((item) => (
+                <button
+                  className="project-item"
+                  key={item}
+                  type="button"
+                  onMouseEnter={() => onProjectHover?.(item)}
+                  onFocus={() => onProjectHover?.(item)}
+                >
+                  {'-> '}
+                  {item}
+                </button>
+              ))}
+            </section>
+          ))}
+        </div>
+      ) : (
+        <p className="monitor-copy">{active.body}</p>
+      )}
     </div>
   )
 }

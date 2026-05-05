@@ -603,6 +603,65 @@ body {
   text-shadow: 0 0 4px rgba(98, 255, 135, 0.28);
 }
 
+.monitor-projects {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: calc(100% - 88px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.project-group {
+  border-left: 1px solid rgba(98, 255, 135, 0.32);
+  padding-left: 8px;
+}
+
+.project-heading {
+  margin: 0 0 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b7ffcb;
+}
+
+.project-item {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #e0ffe8;
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 4px rgba(98, 255, 135, 0.22);
+}
+
+.project-item:hover,
+.project-item:focus-visible {
+  color: #8cffad;
+  outline: none;
+}
+
+.project-preview-hint {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 12;
+  border: 1px solid rgba(98, 255, 135, 0.4);
+  background: rgba(2, 14, 8, 0.9);
+  color: #dfffe7;
+  font-family: 'RetroFont', sans-serif;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 7px rgba(98, 255, 135, 0.55);
+  padding: 8px 10px;
+}
+
 @keyframes monitor-flicker {
   0% { opacity: 0; }
   8% { opacity: 0.95; }
