@@ -8,13 +8,12 @@ import './App.css'
 
 const CAMERA_PRESETS = {
   leftMonitor: {
-    position: [0.28, 1.01, 0.53],
-    target: [-1.05, 1.0, 0.73],
+    position: [0.27, 1.01, 0.43],
+    target: [-1.02, 1.01, 0.77],
   },
   projectsOverview: {
-    // Replace using values captured with the "P" key.
-    position: [1.25, 1.15, 1.7],
-    target: [0.0, 0.95, 0.55],
+    position: [0.46, 1.02, 0.21],
+    target: [-0.08, 1.02, 0.26],
   },
 }
 
