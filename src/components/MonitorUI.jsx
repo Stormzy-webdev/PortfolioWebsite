@@ -124,6 +124,7 @@ export default function MonitorUI({
                     className={`project-item ${selectedProjectId === project.id ? 'is-selected' : ''}`}
                     key={project.id}
                     type="button"
+                    data-text={project.title}
                     onMouseEnter={() => onSelectProject?.(project.id)}
                     onFocus={() => onSelectProject?.(project.id)}
                     onClick={() => onSelectProject?.(project.id)}
