@@ -24,7 +24,7 @@ const CAMERA_PRESETS = {
 
 const ZOOM_LERP_FACTOR = 0.025
 const ZOOM_COMPLETE_THRESHOLD = 0.02
-const LOCK_CAMERA_AFTER_ZOOM = false
+const LOCK_CAMERA_AFTER_ZOOM = true
 
 function Fog() {
   return <fog attach="fog" args={['#16202d', 5.2, 15.5]} />
@@ -205,9 +205,9 @@ function App() {
           target={[0.72, 0.37, 0.2]}
           enableDamping
           dampingFactor={0.05}
-          enablePan={!LOCK_CAMERA_AFTER_ZOOM || !showMonitorUI}
-          enableZoom={!LOCK_CAMERA_AFTER_ZOOM || !showMonitorUI}
-          enableRotate={!LOCK_CAMERA_AFTER_ZOOM || !showMonitorUI}
+          enablePan={!started || !LOCK_CAMERA_AFTER_ZOOM}
+          enableZoom={!started || !LOCK_CAMERA_AFTER_ZOOM}
+          enableRotate={!started || !LOCK_CAMERA_AFTER_ZOOM}
         />
       </Canvas>
       {showMonitorUI && cameraMode === 'projectsOverview' && (

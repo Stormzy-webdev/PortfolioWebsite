@@ -1,17 +1,25 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 
 const sections = {
   about: {
-    title: 'About Me',
-    body: 'I am a frontend-focused developer building immersive and interactive web experiences.',
+    title: 'About',
+    body: 'Frontend-focused developer crafting immersive web experiences with performant UI systems and polished interaction design.',
   },
   projects: {
     title: 'Projects',
     body: '',
   },
+  skills: {
+    title: 'Skills',
+    body: 'Focused on production-ready frontend systems, modern web graphics, and scalable component architecture.',
+  },
+  experience: {
+    title: 'Experience',
+    body: 'Building interactive web products with attention to UX detail, performance, and clean engineering workflows.',
+  },
   contact: {
     title: 'Contact',
-    body: 'Email: ismailstorm08@email.com | GitHub: github.com/yourname | LinkedIn: linkedin.com/in/yourname',
+    body: 'Email: ismailstorm08@email.com  |  GitHub: github.com/yourname  |  LinkedIn: linkedin.com/in/yourname',
   },
 }
 
@@ -34,6 +42,7 @@ export default function MonitorUI({
   onSelectProject,
 }) {
   const [activeTab, setActiveTab] = useState('about')
+  const projectsScrollRef = useRef(null)
   const active = useMemo(() => sections[activeTab], [activeTab])
   const projectGroups = useMemo(() => buildProjectGroups(projects), [projects])
 
@@ -42,8 +51,21 @@ export default function MonitorUI({
     onTabChange?.(tab)
   }
 
+  const handleProjectsWheel = (event) => {
+    const container = projectsScrollRef.current
+    if (!container) return
+    event.preventDefault()
+    event.stopPropagation()
+    container.scrollTop += event.deltaY * 0.08
+  }
+
   return (
     <div className={`monitor-ui-panel ${visible ? 'monitor-ui-visible' : ''}`}>
+      <header className="monitor-brand">
+        <p className="monitor-brand__kicker">Portfolio OS</p>
+        <h2 className="monitor-brand__name">Storm Ismail</h2>
+      </header>
+
       <div className="monitor-tabs">
         <button
           className={`monitor-tab ${activeTab === 'about' ? 'is-active' : ''}`}
@@ -58,6 +80,18 @@ export default function MonitorUI({
           Projects
         </button>
         <button
+          className={`monitor-tab ${activeTab === 'skills' ? 'is-active' : ''}`}
+          onClick={() => handleTabChange('skills')}
+        >
+          Skills
+        </button>
+        <button
+          className={`monitor-tab ${activeTab === 'experience' ? 'is-active' : ''}`}
+          onClick={() => handleTabChange('experience')}
+        >
+          Experience
+        </button>
+        <button
           className={`monitor-tab ${activeTab === 'contact' ? 'is-active' : ''}`}
           onClick={() => handleTabChange('contact')}
         >
@@ -65,34 +99,49 @@ export default function MonitorUI({
         </button>
       </div>
 
-      <h3 className="monitor-title" data-text={active.title}>
-        {active.title}
-      </h3>
+      <section className="monitor-content">
+        <h3 className="monitor-title" data-text={active.title}>
+          {active.title}
+        </h3>
 
-      {activeTab === 'projects' ? (
-        <div className="monitor-projects" aria-label="Project categories">
-          {projectGroups.map((group) => (
-            <section className="project-group" key={group.heading}>
-              <h4 className="project-heading">[{group.heading}]</h4>
-              {group.items.map((project) => (
-                <button
-                  className={`project-item ${selectedProjectId === project.id ? 'is-selected' : ''}`}
-                  key={project.id}
-                  type="button"
-                  onMouseEnter={() => onSelectProject?.(project.id)}
-                  onFocus={() => onSelectProject?.(project.id)}
-                  onClick={() => onSelectProject?.(project.id)}
-                >
-                  {'-> '}
-                  {project.title}
-                </button>
-              ))}
-            </section>
-          ))}
-        </div>
-      ) : (
-        <p className="monitor-copy">{active.body}</p>
-      )}
+        {activeTab === 'projects' ? (
+          <div className="monitor-projects-wrap">
+            <div className="monitor-projects-head">
+              <p className="monitor-projects-head__kicker">Project Catalog</p>
+              <p className="monitor-projects-head__hint">Hover or click to preview on right monitor</p>
+            </div>
+            <div
+              ref={projectsScrollRef}
+              className="monitor-projects"
+              aria-label="Project categories"
+              onWheel={handleProjectsWheel}
+            >
+            {projectGroups.map((group) => (
+              <section className="project-group" key={group.heading}>
+                <h4 className="project-heading">{group.heading}</h4>
+                {group.items.map((project) => (
+                  <button
+                    className={`project-item ${selectedProjectId === project.id ? 'is-selected' : ''}`}
+                    key={project.id}
+                    type="button"
+                    onMouseEnter={() => onSelectProject?.(project.id)}
+                    onFocus={() => onSelectProject?.(project.id)}
+                    onClick={() => onSelectProject?.(project.id)}
+                  >
+                    <span className="project-item__arrow">{'->'}</span>
+                    <span className="project-item__title">{project.title}</span>
+                  </button>
+                ))}
+              </section>
+            ))}
+            </div>
+          </div>
+        ) : (
+          <article className="monitor-card">
+            <p className="monitor-copy">{active.body}</p>
+          </article>
+        )}
+      </section>
     </div>
   )
 }
