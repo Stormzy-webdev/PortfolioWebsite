@@ -7,7 +7,7 @@ export const projects = [
     category: 'Featured',
     previewVideo: '/videos/portfolio-placeholder.mp4',
     previewImage: '/images/portfolio-placeholder.jpg',
-    technologies: ['React', 'R3F', 'Drei', 'Three.js'],
+    tech: ['React', 'R3F', 'Drei', 'Three.js'],
   },
   {
     id: 'social-feed',
@@ -17,7 +17,7 @@ export const projects = [
     category: 'Social Media Apps',
     previewVideo: '/videos/social-feed-placeholder.mp4',
     previewImage: '/images/social-feed-placeholder.jpg',
-    technologies: ['React', 'Vite', 'TypeScript', 'CSS'],
+    tech: ['React', 'Vite', 'TypeScript', 'CSS'],
   },
   {
     id: 'messaging-clone',
@@ -27,7 +27,7 @@ export const projects = [
     category: 'Social Media Apps',
     previewVideo: '/videos/messaging-placeholder.mp4',
     previewImage: '/images/messaging-placeholder.jpg',
-    technologies: ['React', 'Socket.io', 'Framer Motion', 'Node'],
+    tech: ['React', 'Socket.io', 'Framer Motion', 'Node'],
   },
   {
     id: 'dashboard-app',
@@ -37,7 +37,7 @@ export const projects = [
     category: 'Social Media Apps',
     previewVideo: null,
     previewImage: '/images/dashboard-placeholder.jpg',
-    technologies: ['React', 'Chart.js', 'Tailwind', 'REST API'],
+    tech: ['React', 'Chart.js', 'Tailwind', 'REST API'],
   },
   {
     id: 'small-tool-1',
@@ -47,7 +47,7 @@ export const projects = [
     category: '3D Models',
     previewVideo: null,
     previewImage: '/images/tool-1-placeholder.jpg',
-    technologies: ['JavaScript', 'CSS', 'UX'],
+    tech: ['JavaScript', 'CSS', 'UX'],
   },
   {
     id: 'small-tool-2',
@@ -57,7 +57,7 @@ export const projects = [
     category: '3D Models',
     previewVideo: null,
     previewImage: '/images/tool-2-placeholder.jpg',
-    technologies: ['React', 'Motion', 'Design Systems'],
+    tech: ['React', 'Motion', 'Design Systems'],
   },
 ]
 

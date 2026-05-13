@@ -3,18 +3,41 @@ import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import ProjectPreview from './ProjectPreview'
 import ProjectInfoOverlay from './ProjectInfoOverlay'
-import IdleDisplay from './IdleDisplay'
 
-
-// Right Monitor UI control
-const UI_POSITION = [0.0, 0.138, -0.002]
-const UI_SCALE = 0.043
+const UI_POSITION = [0, 0.01, 0.001]
+const UI_SCALE = 0.05
 const UI_ROTATION = [0, 1.4, 0]
+const MATRIX_CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*+-<>'
+const MATRIX_COLUMN_COUNT = 18
+
+function MatrixIdle() {
+  const columns = Array.from({ length: MATRIX_COLUMN_COUNT }, (_, i) => {
+    let text = ''
+    for (let j = 0; j < 28; j += 1) {
+      text += MATRIX_CHARS[(i * 7 + j * 11) % MATRIX_CHARS.length]
+    }
+    return { text, delay: (i % 6) * -0.6, duration: 3.2 + (i % 5) * 0.45 }
+  })
+
+  return (
+    <div className="matrix-idle" aria-hidden="true">
+      {columns.map((column, index) => (
+        <span
+          key={index}
+          className="matrix-column"
+          style={{ '--delay': `${column.delay}s`, '--duration': `${column.duration}s` }}
+        >
+          {column.text}
+        </span>
+      ))}
+    </div>
+  )
+}
 
 export default function RightMonitorDisplay({
   screen,
   selectedProject,
-  isIdle = false,
+  showProjectUI = false,
   active = false,
 }) {
   const transform = useMemo(() => {
@@ -40,7 +63,7 @@ export default function RightMonitorDisplay({
         geometry={screen.geometry}
         transform={transform}
         selectedProject={selectedProject}
-        isIdle={isIdle}
+        isIdle={!showProjectUI}
         active={active}
       />
 
@@ -57,8 +80,13 @@ export default function RightMonitorDisplay({
         <Html transform position={UI_POSITION} rotation={UI_ROTATION} scale={UI_SCALE}>
           <div className={`right-monitor-overlay ${active ? 'is-active' : ''}`}>
             <div className="right-monitor-overlay__scan" />
-            <IdleDisplay visible={isIdle} />
-            <ProjectInfoOverlay project={selectedProject} visible={!isIdle} />
+            {!showProjectUI ? (
+              <MatrixIdle />
+            ) : (
+              <>
+                <ProjectInfoOverlay project={selectedProject} isIdle={false} />
+              </>
+            )}
           </div>
         </Html>
       </group>

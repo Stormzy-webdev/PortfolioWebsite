@@ -19,7 +19,7 @@ export default function PostProcessing() {
         radialModulation
         modulationOffset={0.2}
       />
-      <Vignette eskil={false} offset={0.14} darkness={0.38} />
+      <Vignette eskil={false} offset={0.16} darkness={0.3} />
     </EffectComposer>
   )
 }

@@ -134,7 +134,7 @@ export default function Monitors({
           <RightMonitorDisplay
             screen={rightScreen}
             selectedProject={selectedProject}
-            isIdle={!uiVisible}
+            showProjectUI={rightMonitorActive}
             active={rightMonitorActive}
           />
         </>
