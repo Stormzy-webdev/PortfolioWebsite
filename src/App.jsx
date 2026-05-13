@@ -27,7 +27,7 @@ const ZOOM_COMPLETE_THRESHOLD = 0.02
 const LOCK_CAMERA_AFTER_ZOOM = false
 
 function Fog() {
-  return <fog attach="fog" args={['#111823', 4.6, 14]} />
+  return <fog attach="fog" args={['#16202d', 5.2, 15.5]} />
 }
 
 function CameraZoomController({
@@ -159,7 +159,7 @@ function App() {
           antialias: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 0.96,
+          toneMappingExposure: 1.06,
           outputColorSpace: THREE.SRGBColorSpace,
         }}
       >

@@ -2,19 +2,19 @@ import React from 'react'
 import { ContactShadows, Environment } from '@react-three/drei'
 
 export default function SceneLighting({ focusMode = 'leftMonitor', rightActive = false }) {
-  const rightMonitorKeyLight = rightActive ? 0.62 : 0.36
-  const rightMonitorFill = rightActive ? 0.22 : 0.12
+  const rightMonitorKeyLight = rightActive ? 0.66 : 0.42
+  const rightMonitorFill = rightActive ? 0.28 : 0.18
 
   return (
     <>
       {/* HDRI-based ambient/reflection lighting for believable material response */}
-      <Environment preset="night" environmentIntensity={0.6} background={false} />
+      <Environment preset="night" environmentIntensity={0.82} background={false} />
 
       {/* Soft moonlight / exterior feel */}
       <directionalLight
         castShadow
         position={[3.4, 5.8, 2.1]}
-        intensity={0.82}
+        intensity={0.74}
         color="#dbe7ff"
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
@@ -29,14 +29,17 @@ export default function SceneLighting({ focusMode = 'leftMonitor', rightActive =
       />
 
       {/* Gentle cool fill to keep dark regions readable */}
-      <hemisphereLight args={['#9fb8ff', '#0f1118', 0.26]} />
+      <hemisphereLight args={['#b4c9ff', '#171b25', 0.4]} />
+
+      {/* Soft ambient lift to prevent crushed dark midtones */}
+      <ambientLight intensity={0.14} color="#c3d6ff" />
 
       {/* Left monitor emphasis for initial camera framing */}
       <pointLight
         position={[-1.02, 1.06, 0.92]}
-        intensity={focusMode === 'leftMonitor' ? 0.58 : 0.44}
+        intensity={focusMode === 'leftMonitor' ? 0.64 : 0.5}
         color="#8fffb2"
-        distance={2.1}
+        distance={2.35}
         decay={2}
       />
 
@@ -45,7 +48,7 @@ export default function SceneLighting({ focusMode = 'leftMonitor', rightActive =
         position={[-0.22, 1.02, 0.44]}
         intensity={rightMonitorKeyLight}
         color="#7de9ff"
-        distance={1.7}
+        distance={1.9}
         decay={2}
       />
 
@@ -54,7 +57,16 @@ export default function SceneLighting({ focusMode = 'leftMonitor', rightActive =
         position={[-0.75, 0.74, 0.45]}
         intensity={rightMonitorFill}
         color="#d7f4ff"
-        distance={1.9}
+        distance={2.15}
+        decay={2}
+      />
+
+      {/* Subtle rear rim for background separation and object readability */}
+      <pointLight
+        position={[0.95, 1.2, -0.75]}
+        intensity={0.22}
+        color="#9eb8ff"
+        distance={3.2}
         decay={2}
       />
 
