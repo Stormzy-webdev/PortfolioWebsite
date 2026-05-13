@@ -2,8 +2,13 @@ import React, { Suspense, useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import SetupModel from './components/SetupModel.jsx'
-import LeftMonitor from './components/left-monitor.jsx'
+import Environment from './components/models/Environment.jsx'
+import DeskSetup from './components/models/DeskSetup.jsx'
+import Chair from './components/models/Chair.jsx'
+import Monitors from './components/models/Monitors.jsx'
+import SceneLighting from './components/lighting/SceneLighting.jsx'
+import PostProcessing from './components/lighting/PostProcessing.jsx'
+import { defaultProjectId, projects } from './data/projects.js'
 import './App.css'
 
 const CAMERA_PRESETS = {
@@ -22,7 +27,7 @@ const ZOOM_COMPLETE_THRESHOLD = 0.02
 const LOCK_CAMERA_AFTER_ZOOM = false
 
 function Fog() {
-  return <fog attach="fog" args={['#1b2230', 5, 12]} />
+  return <fog attach="fog" args={['#111823', 4.6, 14]} />
 }
 
 function CameraZoomController({
@@ -39,7 +44,6 @@ function CameraZoomController({
   const targetPosition = useRef(new THREE.Vector3(...goalPosition))
   const targetLookAt = useRef(new THREE.Vector3(...goalTarget))
 
-  // Debug helper: press "P" to copy camera + target values.
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key.toLowerCase() === 'p') {
@@ -105,7 +109,10 @@ function App() {
   const [monitorBooting, setMonitorBooting] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
   const [cameraMode, setCameraMode] = useState('leftMonitor')
-  const [activeProjectPreview, setActiveProjectPreview] = useState('3D Portfolio (selected)')
+  const [selectedProjectId, setSelectedProjectId] = useState(defaultProjectId)
+
+  const selectedProject =
+    projects.find((project) => project.id === selectedProjectId) || projects[0]
 
   const handleStart = () => {
     setStarted(true)
@@ -146,32 +153,42 @@ function App() {
       <Canvas
         camera={{ position: [2.72, 2.91, 0.2], fov: 60 }}
         style={{ width: '100vw', height: '100vh' }}
+        shadows
+        dpr={[1, 1.75]}
+        gl={{
+          antialias: true,
+          powerPreference: 'high-performance',
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 0.96,
+          outputColorSpace: THREE.SRGBColorSpace,
+        }}
       >
         <color attach="background" args={['#1b2230']} />
         <Fog />
-
-        <ambientLight intensity={0.75} color="#dbe7ff" />
-        <directionalLight
-          position={[4, 6, 3]}
-          intensity={1.1}
-          color="#fff4d6"
-          castShadow={false}
+        <SceneLighting
+          focusMode={cameraMode}
+          rightActive={showMonitorUI && cameraMode === 'projectsOverview'}
         />
-        <directionalLight position={[-4, 2, -3]} intensity={0.45} color="#9ac7ff" />
-        <pointLight position={[0, 3, 0]} intensity={0.35} color="#b8ffe0" />
 
         <Suspense fallback={null}>
-          <SetupModel />
-          <LeftMonitor
+          <Environment position={[0, 0, 0]} scale={1} />
+          <DeskSetup position={[0, 0, 0]} scale={1} />
+          <Chair position={[0, 0, 0]} scale={1} />
+          <Monitors
             position={[0, 0, 0]}
             scale={1}
             idleVisible={!monitorBooting && !showMonitorUI}
             uiVisible={showMonitorUI}
             booting={monitorBooting}
             onTabChange={handleMonitorTabChange}
-            onProjectHover={setActiveProjectPreview}
+            projects={projects}
+            selectedProjectId={selectedProjectId}
+            rightMonitorActive={showMonitorUI && cameraMode === 'projectsOverview'}
+            onSelectProject={setSelectedProjectId}
           />
         </Suspense>
+
+        <PostProcessing />
 
         <CameraZoomController
           controlsRef={controlsRef}
@@ -194,7 +211,7 @@ function App() {
         />
       </Canvas>
       {showMonitorUI && cameraMode === 'projectsOverview' && (
-        <div className="project-preview-hint">Preview selected: {activeProjectPreview}</div>
+        <div className="project-preview-hint">Preview selected: {selectedProject?.title}</div>
       )}
     </div>
   )
