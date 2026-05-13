@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import ProjectPreview from './ProjectPreview'
 import ProjectInfoOverlay from './ProjectInfoOverlay'
 
-const UI_POSITION = [0, 0.01, 0.001]
+const UI_POSITION = [0, 0.0, 0.001]
 const UI_SCALE = 0.05
 const UI_ROTATION = [0, 1.4, 0]
 const MATRIX_CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*+-<>'
