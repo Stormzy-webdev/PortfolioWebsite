@@ -7,7 +7,7 @@ import IdleDisplay from './IdleDisplay'
 
 
 // Right Monitor UI control
-const UI_POSITION = [0, 0.148, -0.0]
+const UI_POSITION = [0.0, 0.138, -0.002]
 const UI_SCALE = 0.043
 const UI_ROTATION = [0, 1.4, 0]
 
