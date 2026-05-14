@@ -37,9 +37,15 @@ function MatrixIdle() {
 export default function RightMonitorDisplay({
   screen,
   selectedProject,
-  showProjectUI = false,
-  active = false,
+  mode = 'off',
+  booting = false,
 }) {
+  const showProjectUI = mode === 'project'
+  const showStandbyUI = mode === 'standby'
+  const showOffMatrix = mode === 'off'
+  const isActive = showProjectUI
+  const shouldRenderPreview = showProjectUI || showStandbyUI
+
   const transform = useMemo(() => {
     const screenAspect = (() => {
       if (!screen?.geometry) return 16 / 9
@@ -59,13 +65,15 @@ export default function RightMonitorDisplay({
 
   return (
     <>
-      <ProjectPreview
-        geometry={screen.geometry}
-        transform={transform}
-        selectedProject={selectedProject}
-        isIdle={!showProjectUI}
-        active={active}
-      />
+      {shouldRenderPreview ? (
+        <ProjectPreview
+          geometry={screen.geometry}
+          transform={transform}
+          selectedProject={selectedProject}
+          isIdle={!showProjectUI}
+          active={isActive}
+        />
+      ) : null}
 
       <mesh
         geometry={screen.geometry}
@@ -78,15 +86,18 @@ export default function RightMonitorDisplay({
 
       <group position={transform.position} rotation={transform.rotation} scale={transform.scale}>
         <Html transform position={UI_POSITION} rotation={UI_ROTATION} scale={UI_SCALE}>
-          <div className={`right-monitor-overlay ${active ? 'is-active' : ''}`}>
+          <div className={`right-monitor-overlay ${isActive ? 'is-active' : ''}`}>
             <div className="right-monitor-overlay__scan" />
-            {!showProjectUI ? (
+            {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
+            {showOffMatrix ? (
               <MatrixIdle />
-            ) : (
+            ) : showStandbyUI ? (
+              <ProjectInfoOverlay project={selectedProject} isIdle />
+            ) : showProjectUI ? (
               <>
                 <ProjectInfoOverlay project={selectedProject} isIdle={false} />
               </>
-            )}
+            ) : null}
           </div>
         </Html>
       </group>

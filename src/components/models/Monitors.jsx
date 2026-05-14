@@ -44,7 +44,7 @@ export default function Monitors({
   onTabChange,
   projects = [],
   selectedProjectId,
-  rightMonitorActive = false,
+  rightMonitorMode = 'off',
   onSelectProject,
   ...props
 }) {
@@ -134,8 +134,8 @@ export default function Monitors({
           <RightMonitorDisplay
             screen={rightScreen}
             selectedProject={selectedProject}
-            showProjectUI={rightMonitorActive}
-            active={rightMonitorActive}
+            mode={rightMonitorMode}
+            booting={booting}
           />
         </>
       ) : (

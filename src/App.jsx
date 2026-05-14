@@ -113,6 +113,11 @@ function App() {
 
   const selectedProject =
     projects.find((project) => project.id === selectedProjectId) || projects[0]
+  const rightMonitorMode = !showMonitorUI
+    ? 'off'
+    : cameraMode === 'projectsOverview'
+      ? 'project'
+      : 'standby'
 
   const handleStart = () => {
     setStarted(true)
@@ -167,7 +172,7 @@ function App() {
         <Fog />
         <SceneLighting
           focusMode={cameraMode}
-          rightActive={showMonitorUI && cameraMode === 'projectsOverview'}
+          rightActive={rightMonitorMode === 'project'}
         />
 
         <Suspense fallback={null}>
@@ -183,7 +188,7 @@ function App() {
             onTabChange={handleMonitorTabChange}
             projects={projects}
             selectedProjectId={selectedProjectId}
-            rightMonitorActive={showMonitorUI && cameraMode === 'projectsOverview'}
+            rightMonitorMode={rightMonitorMode}
             onSelectProject={setSelectedProjectId}
           />
         </Suspense>
