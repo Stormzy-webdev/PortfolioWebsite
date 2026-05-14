@@ -19,7 +19,7 @@ const sections = {
   },
   contact: {
     title: 'Contact',
-    body: 'Email: ismailstorm08@email.com  |  GitHub: github.com/yourname  |  LinkedIn: linkedin.com/in/yourname',
+    body: 'Email: ismailstorm08@gmail.com  |  GitHub: github.com/Stormzy-webdev |  LinkedIn: linkedin.com/in/yourname',
   },
 }
 
