@@ -118,7 +118,10 @@ export default function MonitorUI({
             >
             {projectGroups.map((group) => (
               <section className="project-group" key={group.heading}>
-                <h4 className="project-heading">{group.heading}</h4>
+                <h4 className="project-heading">
+                  <span>{group.heading}</span>
+                  <span className="project-heading__count">{group.items.length.toString().padStart(2, '0')}</span>
+                </h4>
                 {group.items.map((project) => (
                   <button
                     className={`project-item ${selectedProjectId === project.id ? 'is-selected' : ''}`}
@@ -130,7 +133,19 @@ export default function MonitorUI({
                     onClick={() => onSelectProject?.(project.id)}
                   >
                     <span className="project-item__arrow">{'->'}</span>
-                    <span className="project-item__title">{project.title}</span>
+                    <span className="project-item__body">
+                      <span className="project-item__title">{project.title}</span>
+                      {project.subtitle ? <span className="project-item__subtitle">{project.subtitle}</span> : null}
+                      {Array.isArray(project.tech) && project.tech.length ? (
+                        <span className="project-item__tags">
+                          {project.tech.slice(0, 3).map((tag) => (
+                            <span className="project-item__tag" key={`${project.id}-${tag}`}>
+                              {tag}
+                            </span>
+                          ))}
+                        </span>
+                      ) : null}
+                    </span>
                   </button>
                 ))}
               </section>
