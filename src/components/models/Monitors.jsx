@@ -45,6 +45,7 @@ export default function Monitors({
   projects = [],
   selectedProjectId,
   rightMonitorMode = 'off',
+  rightMonitorBooting = false,
   onSelectProject,
   ...props
 }) {
@@ -95,8 +96,8 @@ export default function Monitors({
           >
             <meshStandardMaterial
               color="#050505"
-              emissive={new THREE.Color('#1fff6f')}
-              emissiveIntensity={0.62}
+              emissive={new THREE.Color('#61e7ff')}
+              emissiveIntensity={0.72}
               metalness={0.2}
               roughness={0.3}
               side={THREE.FrontSide}
@@ -135,7 +136,7 @@ export default function Monitors({
             screen={rightScreen}
             selectedProject={selectedProject}
             mode={rightMonitorMode}
-            booting={booting}
+            booting={rightMonitorBooting}
           />
         </>
       ) : (

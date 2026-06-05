@@ -107,6 +107,7 @@ function App() {
   const controlsRef = useRef()
   const [started, setStarted] = useState(false)
   const [monitorBooting, setMonitorBooting] = useState(false)
+  const [rightMonitorFlicker, setRightMonitorFlicker] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
   const [cameraMode, setCameraMode] = useState('leftMonitor')
   const [selectedProjectId, setSelectedProjectId] = useState(defaultProjectId)
@@ -117,7 +118,7 @@ function App() {
     ? 'off'
     : cameraMode === 'projectsOverview'
       ? 'project'
-      : 'standby'
+      : 'idle'
 
   const handleStart = () => {
     setStarted(true)
@@ -126,10 +127,21 @@ function App() {
   const handleMonitorTabChange = (tab) => {
     if (tab === 'projects') {
       setCameraMode('projectsOverview')
+      setRightMonitorFlicker(true)
       return
     }
+    setRightMonitorFlicker(false)
     setCameraMode('leftMonitor')
   }
+
+  useEffect(() => {
+    if (!rightMonitorFlicker) return
+    const flickerTimer = setTimeout(() => {
+      setRightMonitorFlicker(false)
+    }, 260)
+
+    return () => clearTimeout(flickerTimer)
+  }, [rightMonitorFlicker])
 
   useEffect(() => {
     let bootTimer
@@ -160,12 +172,18 @@ function App() {
         style={{ width: '100vw', height: '100vh' }}
         shadows
         dpr={[1, 1.75]}
+        onCreated={({ gl }) => {
+          gl.shadowMap.enabled = true
+          gl.shadowMap.type = THREE.PCFSoftShadowMap
+        }}
         gl={{
           antialias: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.06,
+          // Overall lighting control
+          toneMappingExposure: 0.5,
           outputColorSpace: THREE.SRGBColorSpace,
+          useLegacyLights: false,
         }}
       >
         <color attach="background" args={['#1b2230']} />
@@ -189,6 +207,7 @@ function App() {
             projects={projects}
             selectedProjectId={selectedProjectId}
             rightMonitorMode={rightMonitorMode}
+            rightMonitorBooting={monitorBooting || rightMonitorFlicker}
             onSelectProject={setSelectedProjectId}
           />
         </Suspense>

@@ -2,80 +2,82 @@ import React from 'react'
 import { ContactShadows, Environment } from '@react-three/drei'
 
 export default function SceneLighting({ focusMode = 'leftMonitor', rightActive = false }) {
-  const rightMonitorKeyLight = rightActive ? 0.66 : 0.42
-  const rightMonitorFill = rightActive ? 0.28 : 0.18
+  // Monitor lighting intensities (main visual focus)
+  const rightMonitorKeyLight = rightActive ? 0.95 : 0.72
+  const rightMonitorFill = rightActive ? 0.44 : 0.3
+  const monitorAccentBoost = rightActive ? 0.2 : 0.12
+
+  // PC accent boost (keeps tower glow noticeable without overpowering monitors)
+  const pcAccentBoost = rightActive ? 0.3 : 0.22
 
   return (
     <>
-      {/* HDRI-based ambient/reflection lighting for believable material response */}
-      <Environment preset="night" environmentIntensity={0.82} background={false} />
+      {/* Keep a very low base so the room is not pitch black */}
+      <Environment preset="city" environmentIntensity={0.18} background={false} />
+      <ambientLight intensity={0.035} color="#9fb8d6" />
 
-      {/* Soft moonlight / exterior feel */}
-      <directionalLight
-        castShadow
-        position={[3.4, 5.8, 2.1]}
-        intensity={0.74}
-        color="#dbe7ff"
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        shadow-camera-near={1}
-        shadow-camera-far={18}
-        shadow-camera-left={-5}
-        shadow-camera-right={5}
-        shadow-camera-top={5}
-        shadow-camera-bottom={-5}
-        shadow-bias={-0.00015}
-        shadow-normalBias={0.02}
-      />
-
-      {/* Gentle cool fill to keep dark regions readable */}
-      <hemisphereLight args={['#b4c9ff', '#171b25', 0.4]} />
-
-      {/* Soft ambient lift to prevent crushed dark midtones */}
-      <ambientLight intensity={0.14} color="#c3d6ff" />
-
-      {/* Left monitor emphasis for initial camera framing */}
+      {/* LEFT MONITOR cyan glow (primary screen emitter) */}
       <pointLight
-        position={[-1.02, 1.06, 0.92]}
-        intensity={focusMode === 'leftMonitor' ? 0.64 : 0.5}
-        color="#8fffb2"
-        distance={2.35}
+        position={[-1.01, 1.05, 0.84]}
+        intensity={focusMode === 'leftMonitor' ? 1.08 : 0.82}
+        color="#6de8ff"
+        distance={2.45}
         decay={2}
       />
 
-      {/* Right monitor reactive glow that strengthens in projects mode */}
+      {/* RIGHT MONITOR cyan core glow (project showcase focus) */}
       <pointLight
-        position={[-0.22, 1.02, 0.44]}
+        position={[-0.2, 1.02, 0.38]}
         intensity={rightMonitorKeyLight}
         color="#7de9ff"
-        distance={1.9}
+        distance={2.2}
         decay={2}
       />
 
-      {/* Desk-level bounce to ground peripherals */}
+      {/* RIGHT MONITOR purple accent (cyberpunk color separation) */}
       <pointLight
-        position={[-0.75, 0.74, 0.45]}
+        position={[0.16, 1.04, 0.32]}
+        intensity={0.34 + monitorAccentBoost}
+        color="#8d6fff"
+        distance={1.95}
+        decay={2}
+      />
+
+      {/* Desk bounce from screens (raise if keyboard/desk gets too dark) */}
+      <pointLight
+        position={[-0.74, 0.76, 0.42]}
         intensity={rightMonitorFill}
-        color="#d7f4ff"
+        color="#d8ebff"
         distance={2.15}
         decay={2}
       />
 
-      {/* Subtle rear rim for background separation and object readability */}
+      {/* PC TOWER cyan spill */}
       <pointLight
-        position={[0.95, 1.2, -0.75]}
-        intensity={0.22}
-        color="#9eb8ff"
-        distance={3.2}
+        position={[0.55, 0.78, -0.06]}
+        intensity={0.34 + pcAccentBoost}
+        color="#45d9ff"
+        distance={2.15}
         decay={2}
       />
+
+      {/* PC TOWER magenta/purple spill */}
+      <pointLight
+        position={[0.44, 0.95, -0.24]}
+        intensity={0.26 + pcAccentBoost * 0.95}
+        color="#c862ff"
+        distance={1.95}
+        decay={2}
+      />
+
+      {/* No extra room/rim lights: monitors + PC are the visible emitters */}
 
       {/* Subtle contact under setup so assets feel anchored */}
       <ContactShadows
         position={[0, 0.01, 0]}
-        opacity={0.35}
+        opacity={0.28}
         scale={6.5}
-        blur={2.3}
+        blur={2.7}
         far={2.6}
         resolution={1024}
         frames={1}

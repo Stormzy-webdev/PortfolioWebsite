@@ -42,9 +42,10 @@ export default function RightMonitorDisplay({
 }) {
   const showProjectUI = mode === 'project'
   const showStandbyUI = mode === 'standby'
+  const showIdleMatrix = mode === 'idle'
   const showOffMatrix = mode === 'off'
   const isActive = showProjectUI
-  const shouldRenderPreview = showProjectUI || showStandbyUI
+  const shouldRenderPreview = showProjectUI || showStandbyUI || showIdleMatrix
 
   const transform = useMemo(() => {
     const screenAspect = (() => {
@@ -89,7 +90,7 @@ export default function RightMonitorDisplay({
           <div className={`right-monitor-overlay ${isActive ? 'is-active' : ''}`}>
             <div className="right-monitor-overlay__scan" />
             {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
-            {showOffMatrix ? (
+            {showOffMatrix || showIdleMatrix ? (
               <MatrixIdle />
             ) : showStandbyUI ? (
               <ProjectInfoOverlay project={selectedProject} isIdle />

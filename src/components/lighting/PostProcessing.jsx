@@ -8,9 +8,9 @@ export default function PostProcessing() {
     <EffectComposer multisampling={4} enableNormalPass={false}>
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
       <Bloom
-        intensity={0.3}
-        luminanceThreshold={0.66}
-        luminanceSmoothing={0.24}
+        intensity={0.38}
+        luminanceThreshold={0.78}
+        luminanceSmoothing={0.2}
         mipmapBlur
       />
       <ChromaticAberration
