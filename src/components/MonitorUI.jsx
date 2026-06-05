@@ -110,12 +110,12 @@ export default function MonitorUI({
               <p className="monitor-projects-head__kicker">Project Catalog</p>
               <p className="monitor-projects-head__hint">Hover or click to preview on right monitor</p>
             </div>
-            <div
-              ref={projectsScrollRef}
-              className="monitor-projects"
-              aria-label="Project categories"
-              onWheel={handleProjectsWheel}
-            >
+              <div
+                ref={projectsScrollRef}
+                className="monitor-projects"
+                aria-label="Project categories"
+                onWheel={handleProjectsWheel}
+              >
             {projectGroups.map((group) => (
               <section className="project-group" key={group.heading}>
                 <h4 className="project-heading">

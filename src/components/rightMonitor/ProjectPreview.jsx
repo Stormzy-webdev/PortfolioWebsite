@@ -42,7 +42,7 @@ export default function ProjectPreview({ geometry, transform, selectedProject, i
         transparent
         map={preview.texture || null}
         emissiveMap={preview.texture || null}
-        emissive={new THREE.Color('#8fdfff')}
+        emissive={new THREE.Color('#b18eff')}
         emissiveIntensity={emissiveIntensity}
         color={preview.type === 'idle' ? '#6f8ea7' : '#ffffff'}
         metalness={0.08}
