@@ -28,17 +28,22 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
         </div>
 
         <div className="right-screen-ui__tech-pane">
-          <p className="right-screen-ui__section-label">Tech Stack</p>
-          <div className="right-screen-ui__tech">
-            {tech.length > 0 ? (
-              tech.slice(0, 6).map((item) => (
-                <span className="right-screen-ui__chip" key={item}>
-                  {item}
-                </span>
-              ))
-            ) : (
-              <span className="right-screen-ui__chip">{isIdle ? 'Awaiting Selection' : 'Preview Ready'}</span>
-            )}
+          <div className="right-screen-ui__tech-heading-block">
+            <p className="right-screen-ui__section-label">Tech Stack</p>
+          </div>
+
+          <div className="right-screen-ui__tech-chips-block">
+            <div className="right-screen-ui__tech">
+              {tech.length > 0 ? (
+                tech.slice(0, 6).map((item) => (
+                  <span className="right-screen-ui__chip" key={item}>
+                    {item}
+                  </span>
+                ))
+              ) : (
+                <span className="right-screen-ui__chip">{isIdle ? 'Awaiting Selection' : 'Preview Ready'}</span>
+              )}
+            </div>
           </div>
         </div>
       </div>
