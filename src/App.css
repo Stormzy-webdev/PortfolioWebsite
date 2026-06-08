@@ -1106,7 +1106,8 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(134px, 0.85fr);
+  /* Control the tech stack panel size here: the second column is the narrower tech pane */
+  grid-template-columns: minmax(0, 1.7fr) minmax(70px, 0.45fr);
   gap: 8px;
 }
 
@@ -1146,7 +1147,10 @@ body {
   /* Right block showing only the tech stack in a tighter layout */
   position: relative;
   min-height: 0;
-  padding: 7px 7px 6px;
+  /* Reduce this padding to make the tech panel shorter vertically */
+  padding: 5px 6px 5px;
+  align-self: start;
+  height: fit-content;
   border: 1px solid rgba(121, 211, 255, 0.24);
   background:
     linear-gradient(160deg, rgba(8, 16, 30, 0.74), rgba(11, 10, 24, 0.7)),
@@ -1157,6 +1161,20 @@ body {
     inset 0 -1px 0 rgba(168, 116, 255, 0.14),
     0 0 14px rgba(80, 160, 255, 0.12);
   overflow: hidden;
+}
+
+.right-screen-ui__tech-heading-block {
+  /* Dedicated heading block for the tech stack title */
+  position: relative;
+  padding: 2px 0 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(130, 220, 255, 0.18);
+}
+
+.right-screen-ui__tech-chips-block {
+  /* Separate content block below the heading for the tech chips */
+  position: relative;
+  padding-top: 2px;
 }
 
 .right-screen-ui__header,
@@ -1214,12 +1232,13 @@ body {
 }
 
 .right-screen-ui__section-label {
-  margin: 0 0 5px;
+  margin: 0;
   font-size: 8px;
   line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #00a2ff;
+  text-shadow: 0 0 8px rgba(0, 162, 255, 0.22);
 }
 
 /* Right monitor: project title text */
@@ -1275,7 +1294,8 @@ body {
 .right-screen-ui__tech {
   margin-top: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Reduce this if you want the chip list to stay visually smaller inside the tech panel */
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 4px;
   max-height: none;
   overflow: hidden;
@@ -1288,11 +1308,11 @@ body {
     linear-gradient(140deg, rgba(28, 51, 82, 0.6), rgba(26, 23, 58, 0.5)),
     rgba(12, 18, 35, 0.64);
   color: #e2f4ff;
-  padding: 3px 6px;
+  padding: 2px 5px;
   font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-  font-size: 7px;
+  font-size: 6px;
   letter-spacing: 0.02em;
-  line-height: 1.3;
+  line-height: 1.2;
   font-weight: 600;
   border-radius: 999px;
   text-align: center;
@@ -1303,6 +1323,11 @@ body {
     inset 0 0 0 1px rgba(172, 230, 255, 0.16),
     0 0 8px rgba(97, 184, 255, 0.18);
   transition: border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+
+.right-screen-ui__tech-pane {
+  /* The whole tech panel can be tightened or expanded here */
+  min-width: 0;
 }
 
 .right-screen-ui__chip:hover {
