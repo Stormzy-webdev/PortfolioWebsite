@@ -2,7 +2,6 @@ import React from 'react'
 
 export default function ProjectInfoOverlay({ project, isIdle = false }) {
   const title = project?.title || 'Project Preview'
-  const subtitle = project?.subtitle || 'Showcase Window'
   const description =
     project?.description ||
     'Select a project from the left monitor to load a focused preview on the showcase display.'
@@ -20,11 +19,16 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
       </div>
 
       <div className="right-screen-ui__body">
-        <div className="right-screen-ui__details">
-          <p className="right-screen-ui__section-label">Project Details</p>
-          <h4 className="right-screen-ui__title">{title}</h4>
-          <p className="right-screen-ui__subtitle">{subtitle}</p>
-          <p className="right-screen-ui__desc">{description}</p>
+        <div className="right-screen-ui__footer-main">
+          <div className="right-screen-ui__footer-info">
+            <h4 className="right-screen-ui__footer-title">{title}</h4>
+            <p className="right-screen-ui__footer-desc">{description}</p>
+          </div>
+
+          <div className="right-screen-ui__viewport" aria-label="Reserved screen recording viewport">
+            <div className="right-screen-ui__viewport-glow" aria-hidden="true" />
+            <div className="right-screen-ui__viewport-frame" aria-hidden="true" />
+          </div>
         </div>
 
         <div className="right-screen-ui__tech-pane">
