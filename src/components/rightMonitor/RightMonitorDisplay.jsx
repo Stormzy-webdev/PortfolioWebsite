@@ -40,10 +40,11 @@ export default function RightMonitorDisplay({
   mode = 'off',
   booting = false,
 }) {
-  const showProjectUI = mode === 'project'
-  const showStandbyUI = mode === 'standby'
-  const showIdleMatrix = mode === 'idle'
-  const showOffMatrix = mode === 'off'
+  const resolvedMode = ['project', 'standby', 'idle', 'off'].includes(mode) ? mode : 'idle'
+  const showProjectUI = resolvedMode === 'project'
+  const showStandbyUI = resolvedMode === 'standby'
+  const showIdleMatrix = resolvedMode === 'idle'
+  const showOffMatrix = resolvedMode === 'off'
   const isActive = showProjectUI
   const shouldRenderPreview = showProjectUI || showStandbyUI || showIdleMatrix
 

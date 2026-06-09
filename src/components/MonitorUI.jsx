@@ -37,9 +37,10 @@ function buildProjectGroups(projects) {
 export default function MonitorUI({
   visible = false,
   onTabChange,
+  onProjectHover,
+  onProjectSelect,
   projects = [],
   selectedProjectId,
-  onSelectProject,
 }) {
   const [activeTab, setActiveTab] = useState('about')
   const projectsScrollRef = useRef(null)
@@ -128,9 +129,9 @@ export default function MonitorUI({
                     key={project.id}
                     type="button"
                     data-text={project.title}
-                    onMouseEnter={() => onSelectProject?.(project.id)}
-                    onFocus={() => onSelectProject?.(project.id)}
-                    onClick={() => onSelectProject?.(project.id)}
+                    onMouseEnter={() => onProjectHover?.(project.id)}
+                    onFocus={() => onProjectHover?.(project.id)}
+                    onClick={() => onProjectSelect?.(project.id)}
                   >
                     <span className="project-item__arrow">{'->'}</span>
                     <span className="project-item__body">
