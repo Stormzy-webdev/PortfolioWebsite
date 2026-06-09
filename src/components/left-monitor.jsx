@@ -42,6 +42,7 @@ export default function LeftMonitor({
   booting = false,
   onTabChange,
   onProjectHover,
+  onProjectSelect,
   ...props
 }) {
   const group = useRef()
@@ -109,6 +110,7 @@ export default function LeftMonitor({
                     visible={uiVisible}
                     onTabChange={onTabChange}
                     onProjectHover={onProjectHover}
+                    onProjectSelect={onProjectSelect}
                   />
                 </div>
               </Html>

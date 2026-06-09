@@ -141,12 +141,12 @@ export default function useProjectPreview({ selectedProject, screenAspect, isIdl
       }
     }
 
+    useIdle()
+
     if (selectedProject.previewVideo) {
       useVideo(selectedProject.previewVideo)
     } else if (selectedProject.previewImage) {
       useImage(selectedProject.previewImage)
-    } else {
-      useIdle()
     }
 
     return () => {

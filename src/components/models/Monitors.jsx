@@ -46,7 +46,8 @@ export default function Monitors({
   selectedProjectId,
   rightMonitorMode = 'off',
   rightMonitorBooting = false,
-  onSelectProject,
+  onProjectHover,
+  onProjectSelect,
   ...props
 }) {
   const { nodes, scene } = useGLTF('/models/monitors.glb')
@@ -115,9 +116,10 @@ export default function Monitors({
                   <MonitorUI
                     visible={uiVisible}
                     onTabChange={onTabChange}
+                    onProjectHover={onProjectHover}
+                    onProjectSelect={onProjectSelect}
                     projects={projects}
                     selectedProjectId={selectedProject?.id}
-                    onSelectProject={onSelectProject}
                   />
                 </div>
               </Html>

@@ -107,16 +107,17 @@ function App() {
   const controlsRef = useRef()
   const [started, setStarted] = useState(false)
   const [monitorBooting, setMonitorBooting] = useState(false)
-  const [rightMonitorFlicker, setRightMonitorFlicker] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
   const [cameraMode, setCameraMode] = useState('leftMonitor')
+  const [activeMonitorTab, setActiveMonitorTab] = useState('about')
   const [selectedProjectId, setSelectedProjectId] = useState(defaultProjectId)
+  const [projectsScreenPinned, setProjectsScreenPinned] = useState(false)
 
   const selectedProject =
     projects.find((project) => project.id === selectedProjectId) || projects[0]
   const rightMonitorMode = !showMonitorUI
     ? 'off'
-    : cameraMode === 'projectsOverview'
+    : projectsScreenPinned || activeMonitorTab === 'projects' || cameraMode === 'projectsOverview'
       ? 'project'
       : 'idle'
 
@@ -125,23 +126,26 @@ function App() {
   }
 
   const handleMonitorTabChange = (tab) => {
+    setActiveMonitorTab(tab)
+
     if (tab === 'projects') {
+      setProjectsScreenPinned(true)
       setCameraMode('projectsOverview')
-      setRightMonitorFlicker(true)
       return
     }
-    setRightMonitorFlicker(false)
-    setCameraMode('leftMonitor')
+
+    if (!projectsScreenPinned) {
+      setCameraMode('leftMonitor')
+    }
   }
 
-  useEffect(() => {
-    if (!rightMonitorFlicker) return
-    const flickerTimer = setTimeout(() => {
-      setRightMonitorFlicker(false)
-    }, 260)
+  const handleProjectHover = (projectId) => {
+    setSelectedProjectId(projectId)
+  }
 
-    return () => clearTimeout(flickerTimer)
-  }, [rightMonitorFlicker])
+  const handleProjectSelect = (projectId) => {
+    setSelectedProjectId(projectId)
+  }
 
   useEffect(() => {
     let bootTimer
@@ -207,8 +211,9 @@ function App() {
             projects={projects}
             selectedProjectId={selectedProjectId}
             rightMonitorMode={rightMonitorMode}
-            rightMonitorBooting={monitorBooting || rightMonitorFlicker}
-            onSelectProject={setSelectedProjectId}
+            rightMonitorBooting={monitorBooting}
+            onProjectHover={handleProjectHover}
+            onProjectSelect={handleProjectSelect}
           />
         </Suspense>
 
