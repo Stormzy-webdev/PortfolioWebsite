@@ -8,6 +8,7 @@ import Chair from './components/models/Chair.jsx'
 import Monitors from './components/models/Monitors.jsx'
 import SceneLighting from './components/lighting/SceneLighting.jsx'
 import PostProcessing from './components/lighting/PostProcessing.jsx'
+import LoadingScreen from './components/LoadingScreen.jsx'
 import { defaultProjectId, projects } from './data/projects.js'
 import './App.css'
 
@@ -28,6 +29,15 @@ const LOCK_CAMERA_AFTER_ZOOM = true
 
 function Fog() {
   return <fog attach="fog" args={['#16202d', 5.2, 15.5]} />
+}
+
+// Mounts only once everything inside the Suspense boundary has finished loading.
+function SceneReady({ onReady }) {
+  useEffect(() => {
+    onReady(true)
+  }, [onReady])
+
+  return null
 }
 
 function CameraZoomController({
@@ -105,6 +115,7 @@ function CameraZoomController({
 
 function App() {
   const controlsRef = useRef()
+  const [sceneReady, setSceneReady] = useState(false)
   const [started, setStarted] = useState(false)
   const [monitorBooting, setMonitorBooting] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
@@ -163,7 +174,9 @@ function App() {
 
   return (
     <div className="scene-wrapper">
-      {!started && (
+      <LoadingScreen ready={sceneReady} />
+
+      {sceneReady && !started && (
         <div className="overlay">
           <button className="start-button" data-text="Start" onClick={handleStart}>
             <span>Start</span>
@@ -215,6 +228,7 @@ function App() {
             onProjectHover={handleProjectHover}
             onProjectSelect={handleProjectSelect}
           />
+          <SceneReady onReady={setSceneReady} />
         </Suspense>
 
         <PostProcessing />
