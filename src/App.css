@@ -708,6 +708,73 @@ body {
   outline-offset: 4px;
 }
 
+/* ⏻ exit button (top-left while zoomed in on the monitors) */
+.exit-button {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px 12px 14px;
+  font-family: 'RetroFont', sans-serif;
+  font-size: 19px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e7ffe8;
+  background: rgba(2, 10, 8, 0.85);
+  border: 2px solid rgba(104, 255, 137, 0.85);
+  border-radius: 0;
+  text-shadow: 0 0 8px rgba(91, 255, 122, 0.85);
+  box-shadow: 0 0 12px rgba(91, 255, 122, 0.3);
+  cursor: pointer;
+  opacity: 0;
+  /* waits until the zoom-in is under way before appearing */
+  animation: fadePop 0.6s ease 0.8s forwards;
+  transition: transform 160ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+.exit-button:hover,
+.exit-button:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(10, 40, 20, 0.9);
+  box-shadow: 0 0 20px rgba(91, 255, 122, 0.55);
+}
+
+.exit-button:active {
+  transform: translateY(0);
+}
+
+.exit-button:focus-visible {
+  outline: 2px solid #36db6a;
+  outline-offset: 4px;
+}
+
+.exit-button__icon {
+  font-family: system-ui, sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  color: #5bff7a;
+}
+
+.exit-button__key {
+  padding: 3px 7px;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: rgba(190, 255, 205, 0.75);
+  border: 1px solid rgba(104, 255, 137, 0.4);
+  text-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exit-button {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* ✨ animation */
 @keyframes fadePop {
   0% {

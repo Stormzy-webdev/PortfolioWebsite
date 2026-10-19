@@ -1,4 +1,4 @@
-import React, { Suspense, useRef, useState, useEffect } from 'react'
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
@@ -9,22 +9,42 @@ import Monitors from './components/models/Monitors.jsx'
 import SceneLighting from './components/lighting/SceneLighting.jsx'
 import PostProcessing from './components/lighting/PostProcessing.jsx'
 import LoadingScreen from './components/LoadingScreen.jsx'
+import ExitButton from './components/ExitButton.jsx'
 import { defaultProjectId, projects } from './data/projects.js'
 
-const CAMERA_PRESETS = {
+// ---------------------------------------------------------------------------
+// CAMERA VIEWS
+// Every place the camera can fly to. "position" is where the camera sits and
+// "target" is the point it looks at. Press P in the browser to log the
+// current values when you want to tweak or add a view.
+// ---------------------------------------------------------------------------
+const CAMERA_VIEWS = {
+  // Wide shot of the room, shown on the landing screen (behind the Start button)
+  overview: {
+    position: [2.72, 2.91, 0.2],
+    target: [0.72, 0.37, 0.2],
+  },
+  // Close-up of the left monitor (About, Skills, Experience, Contact tabs)
   leftMonitor: {
     position: [0.27, 1.01, 0.43],
     target: [-1.02, 1.01, 0.77],
   },
+  // Pulled back to frame both monitors (Projects tab + right-screen preview)
   projectsOverview: {
     position: [0.46, 1.02, 0.21],
     target: [-0.08, 1.02, 0.26],
   },
 }
 
-const ZOOM_LERP_FACTOR = 0.025
-const ZOOM_COMPLETE_THRESHOLD = 0.02
+// How long one camera move takes, in seconds. Every move takes the same time,
+// whether it's a short hop between monitors or the full zoom out of the room.
+const CAMERA_MOVE_SECONDS = 1.6
+
+// While zoomed in, visitors can't drag or scroll the camera around.
 const LOCK_CAMERA_AFTER_ZOOM = true
+
+// Starts slowly, speeds up in the middle and settles gently at the end.
+const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
 function Fog() {
   return <fog attach="fog" args={['#16202d', 5.2, 15.5]} />
@@ -39,115 +59,132 @@ function SceneReady({ onReady }) {
   return null
 }
 
-function CameraZoomController({
-  controlsRef,
-  shouldZoom,
-  goalPosition,
-  goalTarget,
-  onZoomComplete,
-}) {
+// ---------------------------------------------------------------------------
+// CAMERA RIG
+// Smoothly flies the camera to whichever view is passed in. When `view`
+// changes, it remembers where the camera is right now and glides from there
+// to the new view over CAMERA_MOVE_SECONDS. Starting from the current spot
+// means a move can be interrupted (e.g. pressing Exit mid-zoom) and it simply
+// turns around. When it arrives it calls onArrive(view).
+// ---------------------------------------------------------------------------
+function CameraRig({ controlsRef, view, onArrive }) {
   const { camera } = useThree()
-  const hasCompletedZoom = useRef(false)
-  const lastGoalKey = useRef('')
+  const move = useRef(null)
+  const lastView = useRef(view)
 
-  const targetPosition = useRef(new THREE.Vector3(...goalPosition))
-  const targetLookAt = useRef(new THREE.Vector3(...goalTarget))
-
+  // Debug helper: press P to log the current camera position and target.
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key.toLowerCase() === 'p') {
-        const controls = controlsRef.current
-        if (!controls) return
-
-        console.log('--- COPY THESE VALUES ---')
-
-        console.log(
-          'CAMERA POSITION:',
-          `[${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)}]`
-        )
-
-        console.log(
-          'TARGET:',
-          `[${controls.target.x.toFixed(2)}, ${controls.target.y.toFixed(2)}, ${controls.target.z.toFixed(2)}]`
-        )
-      }
+      if (e.key.toLowerCase() !== 'p') return
+      const controls = controlsRef.current
+      if (!controls) return
+      const fmt = (v) => `[${v.x.toFixed(2)}, ${v.y.toFixed(2)}, ${v.z.toFixed(2)}]`
+      console.log('--- COPY THESE VALUES ---')
+      console.log('CAMERA POSITION:', fmt(camera.position))
+      console.log('TARGET:', fmt(controls.target))
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [camera, controlsRef])
 
+  // A new view was requested: plan a move from wherever the camera is now.
   useEffect(() => {
-    const newGoalKey = `${goalPosition.join(',')}|${goalTarget.join(',')}`
-    if (lastGoalKey.current !== newGoalKey) {
-      targetPosition.current.set(...goalPosition)
-      targetLookAt.current.set(...goalTarget)
-      hasCompletedZoom.current = false
-      lastGoalKey.current = newGoalKey
-    }
-  }, [goalPosition, goalTarget])
-
-  useFrame(() => {
-    if (!shouldZoom || hasCompletedZoom.current) return
+    if (lastView.current === view) return
+    lastView.current = view
 
     const controls = controlsRef.current
     if (!controls) return
 
-    camera.position.lerp(targetPosition.current, ZOOM_LERP_FACTOR)
-    controls.target.lerp(targetLookAt.current, ZOOM_LERP_FACTOR)
+    move.current = {
+      view,
+      elapsed: 0,
+      fromPosition: camera.position.clone(),
+      fromTarget: controls.target.clone(),
+      toPosition: new THREE.Vector3(...CAMERA_VIEWS[view].position),
+      toTarget: new THREE.Vector3(...CAMERA_VIEWS[view].target),
+    }
+  }, [view, camera, controlsRef])
+
+  // Each frame, step the planned move forward a little.
+  useFrame((_, delta) => {
+    const current = move.current
+    const controls = controlsRef.current
+    if (!current || !controls) return
+
+    // Cap the step so coming back from another browser tab mid-move doesn't
+    // make the camera jump, while still keeping time on slower computers.
+    current.elapsed += Math.min(delta, 0.1)
+    const progress = Math.min(current.elapsed / CAMERA_MOVE_SECONDS, 1)
+    const eased = easeInOutCubic(progress)
+
+    camera.position.lerpVectors(current.fromPosition, current.toPosition, eased)
+    controls.target.lerpVectors(current.fromTarget, current.toTarget, eased)
+    // Ignore mouse dragging while the camera is flying so the two don't fight.
+    controls.enabled = false
     controls.update()
 
-    const cameraDistance = camera.position.distanceTo(targetPosition.current)
-    const targetDistance = controls.target.distanceTo(targetLookAt.current)
-
-    if (
-      cameraDistance < ZOOM_COMPLETE_THRESHOLD &&
-      targetDistance < ZOOM_COMPLETE_THRESHOLD
-    ) {
-      hasCompletedZoom.current = true
-      onZoomComplete?.()
+    if (progress >= 1) {
+      move.current = null
+      controls.enabled = true
+      onArrive?.(current.view)
     }
   })
 
   return null
 }
 
-
 function PortfolioScene() {
   const controlsRef = useRef()
   const [sceneReady, setSceneReady] = useState(false)
+  // true from clicking Start until the visitor exits back to the room view
   const [started, setStarted] = useState(false)
   const [monitorBooting, setMonitorBooting] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
-  const [cameraMode, setCameraMode] = useState('leftMonitor')
   const [activeMonitorTab, setActiveMonitorTab] = useState('about')
   const [selectedProjectId, setSelectedProjectId] = useState(defaultProjectId)
-  const [projectsScreenPinned, setProjectsScreenPinned] = useState(false)
+
+  // Which monitor view the open tab needs: Projects frames both screens so the
+  // right-hand preview is visible, every other tab sits on the left monitor.
+  const cameraMode = activeMonitorTab === 'projects' ? 'projectsOverview' : 'leftMonitor'
+  const cameraView = started ? cameraMode : 'overview'
 
   const selectedProject =
     projects.find((project) => project.id === selectedProjectId) || projects[0]
-  const rightMonitorMode = !showMonitorUI
-    ? 'off'
-    : projectsScreenPinned || activeMonitorTab === 'projects' || cameraMode === 'projectsOverview'
-      ? 'project'
-      : 'idle'
+  const rightMonitorMode = !showMonitorUI ? 'off' : activeMonitorTab === 'projects' ? 'project' : 'idle'
 
   const handleStart = () => {
     setStarted(true)
   }
 
-  const handleMonitorTabChange = (tab) => {
-    setActiveMonitorTab(tab)
+  // -------------------------------------------------------------------------
+  // EXIT
+  // Takes the visitor back out to the room: the camera flies back to the
+  // overview, the monitors return to their idle Matrix screens, the tabs reset
+  // to About and the Start button comes back. Triggered by the Exit button or
+  // the Escape key.
+  // -------------------------------------------------------------------------
+  const handleExit = useCallback(() => {
+    setStarted(false)
+    setMonitorBooting(false)
+    setShowMonitorUI(false)
+    setActiveMonitorTab('about')
+  }, [])
 
-    if (tab === 'projects') {
-      setProjectsScreenPinned(true)
-      setCameraMode('projectsOverview')
-      return
+  useEffect(() => {
+    if (!started) return
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') handleExit()
     }
 
-    if (!projectsScreenPinned) {
-      setCameraMode('leftMonitor')
-    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [started, handleExit])
+
+  // When the camera finishes zooming in for the first time, power the monitors on.
+  const handleCameraArrive = (view) => {
+    if (view !== 'overview' && !showMonitorUI && !monitorBooting) setMonitorBooting(true)
   }
 
   const handleProjectHover = (projectId) => {
@@ -184,8 +221,10 @@ function PortfolioScene() {
         </div>
       )}
 
+      {started && <ExitButton onExit={handleExit} />}
+
       <Canvas
-        camera={{ position: [2.72, 2.91, 0.2], fov: 60 }}
+        camera={{ position: CAMERA_VIEWS.overview.position, fov: 60 }}
         style={{ width: '100vw', height: '100vh' }}
         shadows
         dpr={[1, 1.75]}
@@ -220,7 +259,8 @@ function PortfolioScene() {
             idleVisible={!monitorBooting && !showMonitorUI}
             uiVisible={showMonitorUI}
             booting={monitorBooting}
-            onTabChange={handleMonitorTabChange}
+            activeTab={activeMonitorTab}
+            onTabChange={setActiveMonitorTab}
             projects={projects}
             selectedProjectId={selectedProjectId}
             rightMonitorMode={rightMonitorMode}
@@ -233,19 +273,11 @@ function PortfolioScene() {
 
         <PostProcessing />
 
-        <CameraZoomController
-          controlsRef={controlsRef}
-          shouldZoom={started}
-          goalPosition={CAMERA_PRESETS[cameraMode].position}
-          goalTarget={CAMERA_PRESETS[cameraMode].target}
-          onZoomComplete={() => {
-            if (!showMonitorUI) setMonitorBooting(true)
-          }}
-        />
+        <CameraRig controlsRef={controlsRef} view={cameraView} onArrive={handleCameraArrive} />
 
         <OrbitControls
           ref={controlsRef}
-          target={[0.72, 0.37, 0.2]}
+          target={CAMERA_VIEWS.overview.target}
           enableDamping
           dampingFactor={0.05}
           enablePan={!started || !LOCK_CAMERA_AFTER_ZOOM}

@@ -41,6 +41,7 @@ export default function Monitors({
   idleVisible = false,
   uiVisible = false,
   booting = false,
+  activeTab = 'about',
   onTabChange,
   projects = [],
   selectedProjectId,
@@ -115,6 +116,7 @@ export default function Monitors({
                   {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
                   <MonitorUI
                     visible={uiVisible}
+                    activeTab={activeTab}
                     onTabChange={onTabChange}
                     onProjectHover={onProjectHover}
                     onProjectSelect={onProjectSelect}

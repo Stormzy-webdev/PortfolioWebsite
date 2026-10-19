@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 
 const sections = {
   about: {
@@ -34,21 +34,23 @@ function buildProjectGroups(projects) {
   return Object.entries(grouped).map(([heading, items]) => ({ heading, items }))
 }
 
+// The open tab is owned by PortfolioScene (passed in as activeTab) rather than
+// remembered here, so the camera, the right monitor and this screen always
+// agree, and Exit can reset everything back to About.
 export default function MonitorUI({
   visible = false,
+  activeTab = 'about',
   onTabChange,
   onProjectHover,
   onProjectSelect,
   projects = [],
   selectedProjectId,
 }) {
-  const [activeTab, setActiveTab] = useState('about')
   const projectsScrollRef = useRef(null)
   const active = useMemo(() => sections[activeTab], [activeTab])
   const projectGroups = useMemo(() => buildProjectGroups(projects), [projects])
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab)
     onTabChange?.(tab)
   }
 
