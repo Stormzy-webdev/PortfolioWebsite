@@ -3,6 +3,7 @@ import { Html, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import MonitorUI from '../MonitorUI'
 import RightMonitorDisplay from '../rightMonitor/RightMonitorDisplay'
+import BootSequence from '../BootSequence'
 
 const SCREEN_UI_POSITION = [0, 0, 0.0]
 const SCREEN_UI_ROTATION = [0, Math.PI / 1.72, 0]
@@ -113,6 +114,7 @@ export default function Monitors({
               >
                 <div className="monitor-screen-shell">
                   {idleVisible && <MatrixIdle />}
+                  {booting && <BootSequence />}
                   {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
                   <MonitorUI
                     visible={uiVisible}

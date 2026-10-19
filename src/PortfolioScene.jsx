@@ -8,8 +8,19 @@ import Chair from './components/models/Chair.jsx'
 import Monitors from './components/models/Monitors.jsx'
 import SceneLighting from './components/lighting/SceneLighting.jsx'
 import PostProcessing from './components/lighting/PostProcessing.jsx'
+import DustParticles from './components/lighting/DustParticles.jsx'
 import LoadingScreen from './components/LoadingScreen.jsx'
 import ExitButton from './components/ExitButton.jsx'
+import SoundToggle from './components/SoundToggle.jsx'
+import {
+  isMuted,
+  playBoot,
+  playClick,
+  playPowerDown,
+  setMuted,
+  startAmbience,
+  unlockAudio,
+} from './audio/soundEngine.js'
 import { defaultProjectId, projects } from './data/projects.js'
 
 // ---------------------------------------------------------------------------
@@ -39,6 +50,10 @@ const CAMERA_VIEWS = {
 // How long one camera move takes, in seconds. Every move takes the same time,
 // whether it's a short hop between monitors or the full zoom out of the room.
 const CAMERA_MOVE_SECONDS = 1.6
+
+// How long the monitors take to power on (flicker + BIOS text) before the
+// Portfolio OS menu appears, in milliseconds. See BootSequence.jsx.
+const MONITOR_BOOT_MS = 2200
 
 // While zoomed in, visitors can't drag or scroll the camera around.
 const LOCK_CAMERA_AFTER_ZOOM = true
@@ -143,6 +158,7 @@ function PortfolioScene() {
   const [showMonitorUI, setShowMonitorUI] = useState(false)
   const [activeMonitorTab, setActiveMonitorTab] = useState('about')
   const [selectedProjectId, setSelectedProjectId] = useState(defaultProjectId)
+  const [soundMuted, setSoundMuted] = useState(isMuted)
 
   // Which monitor view the open tab needs: Projects frames both screens so the
   // right-hand preview is visible, every other tab sits on the left monitor.
@@ -153,8 +169,32 @@ function PortfolioScene() {
     projects.find((project) => project.id === selectedProjectId) || projects[0]
   const rightMonitorMode = !showMonitorUI ? 'off' : activeMonitorTab === 'projects' ? 'project' : 'idle'
 
+  // Clicking Start is the visitor's first click, which is what browsers need
+  // before a site may play sound, so this is where the room hum begins.
   const handleStart = () => {
+    unlockAudio()
+    startAmbience()
     setStarted(true)
+  }
+
+  // -------------------------------------------------------------------------
+  // SOUND TOGGLE
+  // Mutes/unmutes everything. Turning sound on also counts as the visitor's
+  // first click, so the room hum can start even before they press Start.
+  // -------------------------------------------------------------------------
+  const handleToggleSound = () => {
+    const nextMuted = !soundMuted
+    setMuted(nextMuted)
+    setSoundMuted(nextMuted)
+    if (!nextMuted) {
+      unlockAudio()
+      startAmbience()
+    }
+  }
+
+  const handleTabChange = (tab) => {
+    if (tab !== activeMonitorTab) playClick()
+    setActiveMonitorTab(tab)
   }
 
   // -------------------------------------------------------------------------
@@ -165,6 +205,7 @@ function PortfolioScene() {
   // the Escape key.
   // -------------------------------------------------------------------------
   const handleExit = useCallback(() => {
+    playPowerDown()
     setStarted(false)
     setMonitorBooting(false)
     setShowMonitorUI(false)
@@ -192,16 +233,20 @@ function PortfolioScene() {
   }
 
   const handleProjectSelect = (projectId) => {
+    playClick()
     setSelectedProjectId(projectId)
   }
 
+  // Monitor power-on: play the boot sound, show the flicker + BIOS text for
+  // MONITOR_BOOT_MS, then switch to the Portfolio OS menu.
   useEffect(() => {
     let bootTimer
     if (monitorBooting) {
+      playBoot()
       bootTimer = setTimeout(() => {
         setMonitorBooting(false)
         setShowMonitorUI(true)
-      }, 900)
+      }, MONITOR_BOOT_MS)
     }
 
     return () => {
@@ -222,6 +267,7 @@ function PortfolioScene() {
       )}
 
       {started && <ExitButton onExit={handleExit} />}
+      {sceneReady && <SoundToggle muted={soundMuted} onToggle={handleToggleSound} />}
 
       <Canvas
         camera={{ position: CAMERA_VIEWS.overview.position, fov: 60 }}
@@ -260,7 +306,7 @@ function PortfolioScene() {
             uiVisible={showMonitorUI}
             booting={monitorBooting}
             activeTab={activeMonitorTab}
-            onTabChange={setActiveMonitorTab}
+            onTabChange={handleTabChange}
             projects={projects}
             selectedProjectId={selectedProjectId}
             rightMonitorMode={rightMonitorMode}
@@ -270,6 +316,8 @@ function PortfolioScene() {
           />
           <SceneReady onReady={setSceneReady} />
         </Suspense>
+
+        <DustParticles />
 
         <PostProcessing />
 

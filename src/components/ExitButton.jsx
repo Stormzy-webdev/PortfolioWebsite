@@ -10,7 +10,7 @@ export default function ExitButton({ onExit }) {
   return (
     <button
       type="button"
-      className="exit-button"
+      className="hud-button exit-button"
       data-text="Exit"
       onClick={onExit}
       aria-label="Exit monitor view (Escape)"

@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { ContactShadows, Environment } from '@react-three/drei'
+import * as THREE from 'three'
+import { rgbHue } from './rgbCycle.js'
 
 export default function SceneLighting({ focusMode = 'leftMonitor', rightActive = false }) {
   // Monitor lighting intensities (main visual focus)
@@ -9,6 +12,18 @@ export default function SceneLighting({ focusMode = 'leftMonitor', rightActive =
 
   // PC accent boost (keeps tower glow noticeable without overpowering monitors)
   const pcAccentBoost = rightActive ? 0.3 : 0.22
+
+  // The two lights spilling from the PC tower follow the RGB colour clock, so
+  // the glow on the desk and walls changes colour with the fans. The second
+  // light sits a third of the way round the colour wheel for a two-tone look.
+  const pcSpillA = useRef()
+  const pcSpillB = useRef()
+  const scratch = useMemo(() => new THREE.Color(), [])
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime
+    if (pcSpillA.current) pcSpillA.current.color.copy(scratch.setHSL(rgbHue(t), 0.85, 0.6))
+    if (pcSpillB.current) pcSpillB.current.color.copy(scratch.setHSL(rgbHue(t, 0.33), 0.85, 0.6))
+  })
 
   return (
     <>
@@ -52,8 +67,9 @@ export default function SceneLighting({ focusMode = 'leftMonitor', rightActive =
         decay={2}
       />
 
-      {/* PC TOWER cyan spill */}
+      {/* PC TOWER spill #1 (colour cycles with the RGB clock) */}
       <pointLight
+        ref={pcSpillA}
         position={[0.55, 0.78, -0.06]}
         intensity={0.34 + pcAccentBoost}
         color="#45d9ff"
@@ -61,8 +77,9 @@ export default function SceneLighting({ focusMode = 'leftMonitor', rightActive =
         decay={2}
       />
 
-      {/* PC TOWER magenta/purple spill */}
+      {/* PC TOWER spill #2 (colour cycles, offset from #1) */}
       <pointLight
+        ref={pcSpillB}
         position={[0.44, 0.95, -0.24]}
         intensity={0.26 + pcAccentBoost * 0.95}
         color="#c862ff"

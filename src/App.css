@@ -708,12 +708,14 @@ body {
   outline-offset: 4px;
 }
 
-/* ⏻ exit button (top-left while zoomed in on the monitors) */
-.exit-button {
+/* 🎛 HUD buttons: shared look for the corner controls (Exit, Sound) */
+.hud-button {
   position: absolute;
   top: 24px;
-  left: 24px;
-  z-index: 15;
+  /* The monitor screens are HTML layers that drei stacks at z-index ~16.7
+     million, and the right screen reaches the top-right corner when zoomed
+     in. Sit above them so the corner buttons always stay clickable. */
+  z-index: 2147483000;
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -729,26 +731,55 @@ body {
   text-shadow: 0 0 8px rgba(91, 255, 122, 0.85);
   box-shadow: 0 0 12px rgba(91, 255, 122, 0.3);
   cursor: pointer;
-  opacity: 0;
-  /* waits until the zoom-in is under way before appearing */
-  animation: fadePop 0.6s ease 0.8s forwards;
-  transition: transform 160ms ease, box-shadow 200ms ease, background 200ms ease;
+  transition: transform 160ms ease, box-shadow 200ms ease, background 200ms ease, opacity 200ms ease;
 }
 
-.exit-button:hover,
-.exit-button:focus-visible {
+.hud-button:hover,
+.hud-button:focus-visible {
   transform: translateY(-2px);
   background: rgba(10, 40, 20, 0.9);
   box-shadow: 0 0 20px rgba(91, 255, 122, 0.55);
 }
 
-.exit-button:active {
+.hud-button:active {
   transform: translateY(0);
 }
 
-.exit-button:focus-visible {
+.hud-button:focus-visible {
   outline: 2px solid #36db6a;
   outline-offset: 4px;
+}
+
+/* ⏻ exit button (top-left while zoomed in on the monitors) */
+.exit-button {
+  left: 24px;
+  opacity: 0;
+  /* waits until the zoom-in is under way before appearing */
+  animation: fadePop 0.6s ease 0.8s forwards;
+}
+
+/* 🔊 sound toggle (top-right, always available once the scene has loaded) */
+.sound-toggle {
+  right: 24px;
+  font-size: 15px;
+  padding: 10px 14px 10px 12px;
+}
+
+.sound-toggle.is-muted {
+  color: rgba(231, 255, 232, 0.6);
+  border-color: rgba(104, 255, 137, 0.4);
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.sound-toggle__icon {
+  width: 20px;
+  height: 20px;
+  color: #5bff7a;
+}
+
+.sound-toggle.is-muted .sound-toggle__icon {
+  color: rgba(190, 255, 205, 0.55);
 }
 
 .exit-button__icon {
@@ -902,6 +933,68 @@ body {
     radial-gradient(circle at 30% 20%, rgba(126, 255, 170, 0.22), transparent 55%),
     rgba(10, 30, 14, 0.86);
   animation: monitor-flicker 900ms steps(8, end) forwards;
+}
+
+/* BIOS boot text on the left monitor (see BootSequence.jsx) */
+.boot-sequence {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #b9ffc9;
+  text-shadow: 0 0 6px rgba(116, 255, 154, 0.7);
+  background:
+    repeating-linear-gradient(180deg, rgba(74, 255, 122, 0.06) 0px, rgba(74, 255, 122, 0.06) 1px, transparent 1px, transparent 3px),
+    #020804;
+}
+
+/* Each line starts hidden and "types" in from left to right after its delay */
+.boot-sequence__line {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  white-space: nowrap;
+  clip-path: inset(0 100% 0 0);
+  animation: boot-type 220ms steps(22, end) var(--delay) forwards;
+}
+
+.boot-sequence__line:first-child {
+  margin-bottom: 6px;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+}
+
+.boot-sequence__status {
+  color: #5bff7a;
+}
+
+.boot-sequence__cursor {
+  display: inline-block;
+  width: 7px;
+  height: 12px;
+  margin-top: 2px;
+  background: #5bff7a;
+  opacity: 0;
+  animation: boot-cursor 700ms steps(1, end) var(--delay) infinite;
+}
+
+@keyframes boot-type {
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes boot-cursor {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-sequence__line {
+    animation-duration: 1ms;
+  }
 }
 
 .monitor-ui-panel {
