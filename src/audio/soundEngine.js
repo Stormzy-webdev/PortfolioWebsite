@@ -189,6 +189,15 @@ export function playClick() {
   sweep({ from: 1700, to: 1200, start: now, length: 0.025, volume: 0.04 })
 }
 
+// A softer, shorter tick for each key typed in the terminal. The pitch varies
+// slightly so fast typing doesn't sound robotic.
+export function playKey() {
+  if (!ensureContext()) return
+  const now = ctx.currentTime
+  const pitch = 2600 + Math.random() * 900
+  noiseBurst({ start: now, length: 0.022, volume: 0.09, filter: 'highpass', frequency: pitch })
+}
+
 // Screen switching off when leaving the monitors: a falling tone and a soft thud.
 export function playPowerDown() {
   if (!ensureContext()) return

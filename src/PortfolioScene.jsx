@@ -91,6 +91,8 @@ function CameraRig({ controlsRef, view, onArrive }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key.toLowerCase() !== 'p') return
+      // Don't fire while someone is typing (e.g. in the terminal).
+      if (e.target instanceof HTMLInputElement) return
       const controls = controlsRef.current
       if (!controls) return
       const fmt = (v) => `[${v.x.toFixed(2)}, ${v.y.toFixed(2)}, ${v.z.toFixed(2)}]`
@@ -157,6 +159,9 @@ function PortfolioScene() {
   const [monitorBooting, setMonitorBooting] = useState(false)
   const [showMonitorUI, setShowMonitorUI] = useState(false)
   const [activeMonitorTab, setActiveMonitorTab] = useState('about')
+  // What the left monitor shows once booted: the Portfolio OS 'menu', or the
+  // hidden 'terminal' (opened by clicking the keyboard in the room).
+  const [screenMode, setScreenMode] = useState('menu')
   const [selectedProjectId, setSelectedProjectId] = useState(defaultProjectId)
   const [soundMuted, setSoundMuted] = useState(isMuted)
 
@@ -175,6 +180,13 @@ function PortfolioScene() {
     unlockAudio()
     startAmbience()
     setStarted(true)
+  }
+
+  // Keyboard Easter egg: same zoom and boot as Start, but the monitor opens
+  // the terminal instead of the menu.
+  const handleOpenTerminal = () => {
+    setScreenMode('terminal')
+    handleStart()
   }
 
   // -------------------------------------------------------------------------
@@ -210,6 +222,7 @@ function PortfolioScene() {
     setMonitorBooting(false)
     setShowMonitorUI(false)
     setActiveMonitorTab('about')
+    setScreenMode('menu')
   }, [])
 
   useEffect(() => {
@@ -263,6 +276,7 @@ function PortfolioScene() {
           <button className="start-button" data-text="Start" onClick={handleStart}>
             <span>Start</span>
           </button>
+          <p className="start-hint">psst... try clicking the keyboard</p>
         </div>
       )}
 
@@ -297,7 +311,12 @@ function PortfolioScene() {
 
         <Suspense fallback={null}>
           <Environment position={[0, 0, 0]} scale={1} />
-          <DeskSetup position={[0, 0, 0]} scale={1} />
+          <DeskSetup
+            position={[0, 0, 0]}
+            scale={1}
+            keyboardInteractive={sceneReady && !started}
+            onKeyboardClick={handleOpenTerminal}
+          />
           <Chair position={[0, 0, 0]} scale={1} />
           <Monitors
             position={[0, 0, 0]}
@@ -307,6 +326,8 @@ function PortfolioScene() {
             booting={monitorBooting}
             activeTab={activeMonitorTab}
             onTabChange={handleTabChange}
+            screenMode={screenMode}
+            onTerminalExit={() => setScreenMode('menu')}
             projects={projects}
             selectedProjectId={selectedProjectId}
             rightMonitorMode={rightMonitorMode}

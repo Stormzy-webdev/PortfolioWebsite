@@ -548,8 +548,121 @@ body {
   justify-content: center;
   align-items: center;
 
+  flex-direction: column;
+  gap: 18px;
+
   transform: translateY(150px);
   z-index: 10;
+  /* Covers the whole screen, so let clicks and drags pass through to the 3D
+     room (orbiting, the clickable keyboard). Only the Start button catches them. */
+  pointer-events: none;
+}
+
+.overlay .start-button {
+  pointer-events: auto;
+}
+
+/* Hint under the Start button pointing at the keyboard Easter egg */
+.start-hint {
+  margin: 0;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: rgba(190, 255, 205, 0.6);
+  text-shadow: 0 0 8px rgba(91, 255, 122, 0.35);
+  opacity: 0;
+  animation: fadePop 0.8s ease 1.2s forwards;
+}
+
+/* Label that appears above the keyboard when hovering it in the room view */
+.keyboard-tooltip {
+  padding: 6px 10px;
+  white-space: nowrap;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: #e7ffe8;
+  background: rgba(2, 10, 8, 0.88);
+  border: 1px solid rgba(104, 255, 137, 0.8);
+  box-shadow: 0 0 12px rgba(91, 255, 122, 0.35);
+}
+
+/* ⌨ Terminal (keyboard Easter egg) on the left monitor, see terminal/Terminal.jsx */
+.terminal {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 9.5px;
+  line-height: 1.55;
+  color: #c9ffd6;
+  text-shadow: 0 0 5px rgba(116, 255, 154, 0.45);
+  background:
+    repeating-linear-gradient(180deg, rgba(74, 255, 122, 0.05) 0px, rgba(74, 255, 122, 0.05) 1px, transparent 1px, transparent 3px),
+    #020804;
+  cursor: text;
+  animation: monitor-ui-in 420ms ease-out;
+}
+
+.terminal__output {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91, 255, 122, 0.4) transparent;
+}
+
+.terminal__line {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal__line--accent { color: #5bff7a; }
+.terminal__line--muted { color: rgba(185, 255, 201, 0.55); }
+.terminal__line--error { color: #ff7a8a; text-shadow: 0 0 5px rgba(255, 90, 110, 0.4); }
+.terminal__line--command { color: #ffffff; margin-top: 6px; }
+
+.terminal__line--link a {
+  color: #7fe7ff;
+  text-decoration: none;
+  white-space: pre;
+}
+
+.terminal__line--link a:hover {
+  text-decoration: underline;
+}
+
+.terminal__prompt {
+  color: #5bff7a;
+  white-space: nowrap;
+}
+
+.terminal__input-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.terminal__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  text-shadow: inherit;
+  caret-color: #5bff7a;
+}
+
+.terminal__matrix {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: pointer;
 }
 
 /* 🎯 start button */

@@ -4,45 +4,20 @@ import * as THREE from 'three'
 import MonitorUI from '../MonitorUI'
 import RightMonitorDisplay from '../rightMonitor/RightMonitorDisplay'
 import BootSequence from '../BootSequence'
+import MatrixRain from '../MatrixRain'
+import Terminal from '../terminal/Terminal'
 
 const SCREEN_UI_POSITION = [0, 0, 0.0]
 const SCREEN_UI_ROTATION = [0, Math.PI / 1.72, 0]
 const SCREEN_UI_SCALE = 0.05
-
-const MATRIX_CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*+-<>'
-const MATRIX_COLUMN_COUNT = 18
-
-function MatrixIdle() {
-  const columns = useMemo(() => {
-    return Array.from({ length: MATRIX_COLUMN_COUNT }, (_, i) => {
-      let text = ''
-      for (let j = 0; j < 28; j += 1) {
-        text += MATRIX_CHARS[(i * 7 + j * 11) % MATRIX_CHARS.length]
-      }
-      return { text, delay: (i % 6) * -0.6, duration: 3.2 + (i % 5) * 0.45 }
-    })
-  }, [])
-
-  return (
-    <div className="matrix-idle" aria-hidden="true">
-      {columns.map((column, index) => (
-        <span
-          key={index}
-          className="matrix-column"
-          style={{ '--delay': `${column.delay}s`, '--duration': `${column.duration}s` }}
-        >
-          {column.text}
-        </span>
-      ))}
-    </div>
-  )
-}
 
 export default function Monitors({
   idleVisible = false,
   uiVisible = false,
   booting = false,
   activeTab = 'about',
+  screenMode = 'menu',
+  onTerminalExit,
   onTabChange,
   projects = [],
   selectedProjectId,
@@ -113,18 +88,23 @@ export default function Monitors({
                 scale={SCREEN_UI_SCALE}
               >
                 <div className="monitor-screen-shell">
-                  {idleVisible && <MatrixIdle />}
+                  {idleVisible && <MatrixRain />}
                   {booting && <BootSequence />}
                   {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
-                  <MonitorUI
-                    visible={uiVisible}
-                    activeTab={activeTab}
-                    onTabChange={onTabChange}
-                    onProjectHover={onProjectHover}
-                    onProjectSelect={onProjectSelect}
-                    projects={projects}
-                    selectedProjectId={selectedProject?.id}
-                  />
+                  {/* Opened via the keyboard: the terminal replaces the Portfolio OS menu */}
+                  {screenMode === 'terminal' && uiVisible ? (
+                    <Terminal onExit={onTerminalExit} />
+                  ) : (
+                    <MonitorUI
+                      visible={uiVisible}
+                      activeTab={activeTab}
+                      onTabChange={onTabChange}
+                      onProjectHover={onProjectHover}
+                      onProjectSelect={onProjectSelect}
+                      projects={projects}
+                      selectedProjectId={selectedProject?.id}
+                    />
+                  )}
                 </div>
               </Html>
             )}
