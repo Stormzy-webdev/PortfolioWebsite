@@ -9,7 +9,7 @@ import { projects } from '../../data/projects.js'
 //   - description: shown by `help` (leave it out to keep a command secret)
 //   - run(args): returns { lines, action }
 //       lines  -> what gets printed (see the helpers below)
-//       action -> optional special effect: 'clear' | 'exit' | 'matrix' | 'email'
+//       action -> optional special effect: 'clear' | 'exit' | 'matrix' | 'email' | 'cv'
 //
 // To add a command, add an entry to COMMANDS. The text is pulled from
 // data/profile.js and data/projects.js, so it updates itself when those change.
@@ -78,6 +78,12 @@ export const COMMANDS = {
   skills: { description: "tech I've worked with", run: () => ({ lines: skillsLines() }) },
   projects: { description: 'list my projects', run: () => ({ lines: projectsLines() }) },
   contact: { description: 'ways to reach me', run: () => ({ lines: contactLines() }) },
+  ...(profile.cv && {
+    cv: {
+      description: 'open my CV (PDF)',
+      run: () => ({ lines: [muted('Opening CV in a new tab...')], action: 'cv' }),
+    },
+  }),
   email: {
     description: 'open your mail app',
     run: () => ({ lines: [muted(`Opening a new email to ${profile.email}...`)], action: 'email' }),

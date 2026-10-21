@@ -181,6 +181,11 @@ export default function MonitorUI({
         ) : (
           <article className="monitor-card">
             <p className="monitor-copy">{active.body}</p>
+            {activeTab === 'contact' && profile.cv && (
+              <a className="monitor-cv-link" href={profile.cv} target="_blank" rel="noreferrer">
+                Download CV (PDF)
+              </a>
+            )}
           </article>
         )}
       </section>

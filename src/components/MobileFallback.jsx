@@ -57,7 +57,8 @@ export default function MobileFallback() {
         <ul className="mobile-fallback__links">
           {links.map((link) => (
             <li key={link.label}>
-              <a href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+              {/* Everything except email opens in a new tab so the portfolio stays open */}
+              <a href={link.href} target={link.href.startsWith('mailto:') ? undefined : '_blank'} rel="noreferrer">
                 <span className="mobile-fallback__link-label">{link.label}</span>
                 <span className="mobile-fallback__link-value">{link.value}</span>
               </a>

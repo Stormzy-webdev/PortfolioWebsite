@@ -75,6 +75,7 @@ export default function Terminal({ onExit }) {
 
     if (action === 'matrix') setMatrixOn(true)
     if (action === 'email') window.location.href = `mailto:${profile.email}`
+    if (action === 'cv') window.open(profile.cv, '_blank', 'noopener')
     if (action === 'exit') setTimeout(() => onExit?.(), 450)
   }
 
@@ -128,7 +129,8 @@ export default function Terminal({ onExit }) {
             </p>
           ) : line.href ? (
             <p key={line.id} className="terminal__line terminal__line--link">
-              <a href={line.href} target={line.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+              {/* Everything except email opens in a new tab so the portfolio stays open */}
+              <a href={line.href} target={line.href.startsWith('mailto:') ? undefined : '_blank'} rel="noreferrer">
                 {line.text}
               </a>
             </p>

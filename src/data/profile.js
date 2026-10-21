@@ -7,5 +7,6 @@ export const profile = {
   email: 'ismailstorm08@gmail.com',
   github: 'https://github.com/Stormzy-webdev',
   linkedin: 'https://www.linkedin.com/in/storm-ismail-65a2a8221/',
-  cv: null,
+  // File in /public. To update the CV, replace that PDF (same name) and redeploy.
+  cv: '/StormIsmailCV_01.pdf',
 }
