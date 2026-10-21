@@ -18,6 +18,7 @@ export default function Monitors({
   activeTab = 'about',
   screenMode = 'menu',
   onTerminalExit,
+  onOpenTerminal,
   onTabChange,
   projects = [],
   selectedProjectId,
@@ -99,6 +100,7 @@ export default function Monitors({
                       visible={uiVisible}
                       activeTab={activeTab}
                       onTabChange={onTabChange}
+                      onOpenTerminal={onOpenTerminal}
                       onProjectHover={onProjectHover}
                       onProjectSelect={onProjectSelect}
                       projects={projects}

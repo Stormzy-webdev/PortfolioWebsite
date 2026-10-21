@@ -41,6 +41,7 @@ export default function MonitorUI({
   visible = false,
   activeTab = 'about',
   onTabChange,
+  onOpenTerminal,
   onProjectHover,
   onProjectSelect,
   projects = [],
@@ -68,6 +69,16 @@ export default function MonitorUI({
         <p className="monitor-brand__kicker">Portfolio OS</p>
         <h2 className="monitor-brand__name">Storm Ismail</h2>
       </header>
+
+      {/* Second way into the keyboard Easter egg, for visitors who used Start */}
+      <button
+        type="button"
+        className="monitor-terminal-launch"
+        onClick={() => onOpenTerminal?.()}
+        aria-label="Open the terminal"
+      >
+        &gt;_ terminal
+      </button>
 
       <div className="monitor-tabs">
         <button

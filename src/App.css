@@ -1231,6 +1231,32 @@ body {
   transform: translateY(-1px);
 }
 
+/* ">_ terminal" button in the top-right of the Portfolio OS header */
+.monitor-terminal-launch {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  padding: 4px 8px;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: #b9ffc9;
+  background: rgba(2, 12, 6, 0.85);
+  border: 1px solid rgba(104, 255, 137, 0.55);
+  text-shadow: 0 0 5px rgba(116, 255, 154, 0.5);
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+
+.monitor-terminal-launch:hover,
+.monitor-terminal-launch:focus-visible {
+  color: #ffffff;
+  border-color: rgba(104, 255, 137, 0.95);
+  box-shadow: 0 0 10px rgba(91, 255, 122, 0.45);
+  outline: none;
+}
+
 .monitor-content {
   position: relative;
   height: calc(100% - 88px);

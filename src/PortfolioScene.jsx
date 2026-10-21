@@ -189,6 +189,15 @@ function PortfolioScene() {
     handleStart()
   }
 
+  // The ">_ terminal" button in the Portfolio OS menu. The terminal lives on
+  // the left monitor, so switch back to About first (moves the camera there
+  // if the visitor was on Projects, and is where `exit` returns to).
+  const handleOpenTerminalFromMenu = () => {
+    playClick()
+    setActiveMonitorTab('about')
+    setScreenMode('terminal')
+  }
+
   // -------------------------------------------------------------------------
   // SOUND TOGGLE
   // Mutes/unmutes everything. Turning sound on also counts as the visitor's
@@ -328,6 +337,7 @@ function PortfolioScene() {
             onTabChange={handleTabChange}
             screenMode={screenMode}
             onTerminalExit={() => setScreenMode('menu')}
+            onOpenTerminal={handleOpenTerminalFromMenu}
             projects={projects}
             selectedProjectId={selectedProjectId}
             rightMonitorMode={rightMonitorMode}
