@@ -6,6 +6,6 @@ export const profile = {
     'Frontend-focused developer crafting immersive web experiences with performant UI systems and polished interaction design.',
   email: 'ismailstorm08@gmail.com',
   github: 'https://github.com/Stormzy-webdev',
-  linkedin: null,
+  linkedin: 'https://www.linkedin.com/in/storm-ismail-65a2a8221/',
   cv: null,
 }

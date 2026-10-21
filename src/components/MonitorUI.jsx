@@ -1,4 +1,16 @@
 import React, { useMemo, useRef } from 'react'
+import { profile } from '../data/profile.js'
+
+// Contact line built from data/profile.js (the same details the terminal and
+// the phone screen use), so contact info only ever needs updating in one place.
+const stripProtocol = (url) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
+const contactBody = [
+  profile.email && `Email: ${profile.email}`,
+  profile.github && `GitHub: ${stripProtocol(profile.github)}`,
+  profile.linkedin && `LinkedIn: ${stripProtocol(profile.linkedin)}`,
+]
+  .filter(Boolean)
+  .join('  |  ')
 
 const sections = {
   about: {
@@ -19,7 +31,7 @@ const sections = {
   },
   contact: {
     title: 'Contact',
-    body: 'Email: ismailstorm08@gmail.com  |  GitHub: github.com/Stormzy-webdev |  LinkedIn: linkedin.com/in/yourname',
+    body: contactBody,
   },
 }
 
