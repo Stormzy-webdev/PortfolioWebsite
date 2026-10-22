@@ -3,6 +3,7 @@ import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import ProjectPreview from './ProjectPreview'
 import ProjectInfoOverlay from './ProjectInfoOverlay'
+import { SCREEN_TEXT_ZOOM } from '../screenSharpness'
 
 const UI_POSITION = [0, 0.0, 0.001]
 const UI_SCALE = 0.05
@@ -87,8 +88,9 @@ export default function RightMonitorDisplay({
       </mesh>
 
       <group position={transform.position} rotation={transform.rotation} scale={transform.scale}>
-        <Html transform position={UI_POSITION} rotation={UI_ROTATION} scale={UI_SCALE}>
-          <div className={`right-monitor-overlay ${isActive ? 'is-active' : ''}`}>
+        {/* laid out bigger + scaled down = sharper text (see screenSharpness.js) */}
+        <Html transform position={UI_POSITION} rotation={UI_ROTATION} scale={UI_SCALE / SCREEN_TEXT_ZOOM}>
+          <div className={`right-monitor-overlay ${isActive ? 'is-active' : ''}`} style={{ zoom: SCREEN_TEXT_ZOOM }}>
             <div className="right-monitor-overlay__scan" />
             {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
             {showOffMatrix || showIdleMatrix ? (

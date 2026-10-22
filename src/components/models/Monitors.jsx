@@ -6,6 +6,7 @@ import RightMonitorDisplay from '../rightMonitor/RightMonitorDisplay'
 import BootSequence from '../BootSequence'
 import MatrixRain from '../MatrixRain'
 import Terminal from '../terminal/Terminal'
+import { SCREEN_TEXT_ZOOM } from '../screenSharpness'
 
 const SCREEN_UI_POSITION = [0, 0, 0.0]
 const SCREEN_UI_ROTATION = [0, Math.PI / 1.72, 0]
@@ -86,9 +87,10 @@ export default function Monitors({
                 transform
                 position={SCREEN_UI_POSITION}
                 rotation={SCREEN_UI_ROTATION}
-                scale={SCREEN_UI_SCALE}
+                // laid out bigger + scaled down = sharper text (see screenSharpness.js)
+                scale={SCREEN_UI_SCALE / SCREEN_TEXT_ZOOM}
               >
-                <div className="monitor-screen-shell">
+                <div className="monitor-screen-shell" style={{ zoom: SCREEN_TEXT_ZOOM }}>
                   {idleVisible && <MatrixRain />}
                   {booting && <BootSequence />}
                   {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}

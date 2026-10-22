@@ -2403,3 +2403,10 @@ body {
   font-style: italic;
   color: rgba(190, 255, 205, 0.55);
 }
+
+/* No background blur on the right monitor's panels: combined with the sharper
+   text zoom (screenSharpness.js) browsers mis-sample the blur and wash the
+   screen out lavender. The screen behind is plain dark, so blur added nothing. */
+.right-monitor-overlay * {
+  backdrop-filter: none;
+}
