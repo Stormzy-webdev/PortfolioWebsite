@@ -1,5 +1,6 @@
 import { profile } from '../../data/profile.js'
 import { projects } from '../../data/projects.js'
+import { education, experience, skills } from '../../data/content.js'
 
 // ===========================================================================
 // TERMINAL COMMANDS
@@ -12,7 +13,8 @@ import { projects } from '../../data/projects.js'
 //       action -> optional special effect: 'clear' | 'exit' | 'matrix' | 'email' | 'cv'
 //
 // To add a command, add an entry to COMMANDS. The text is pulled from
-// data/profile.js and data/projects.js, so it updates itself when those change.
+// data/profile.js, data/projects.js and data/content.js, so it updates itself
+// when those change.
 // ===========================================================================
 
 // Line helpers: `style` picks the colour (see .terminal__line--* in App.css)
@@ -27,12 +29,18 @@ function whoamiLines() {
   return [accent(`${profile.name} - ${profile.role}`), text(profile.intro)]
 }
 
-// Skills = every technology used across the projects, without duplicates.
+// Skills come from the same groups as the Skills tab (data/content.js).
 function skillsLines() {
-  const tech = [...new Set(projects.flatMap((project) => project.tech || []))]
-  const rows = []
-  for (let i = 0; i < tech.length; i += 4) rows.push(text(`  ${tech.slice(i, i + 4).join('  ·  ')}`))
-  return [accent("Tech I've built with:"), ...rows]
+  return skills.flatMap(({ group, items }) => [accent(`${group}:`), text(`  ${items.join('  ·  ')}`)])
+}
+
+function experienceLines() {
+  const jobs = experience.flatMap((job) => [
+    accent(`${job.role} @ ${job.place}  (${job.dates})`),
+    ...job.points.map((point) => text(`  - ${point}`)),
+    blank(),
+  ])
+  return [...jobs, accent('Education:'), ...education.map((entry) => text(`  - ${entry.title}, ${entry.place} (${entry.dates})`))]
 }
 
 function projectsLines() {
@@ -57,6 +65,7 @@ function contactLines() {
 const FILES = {
   'about.txt': whoamiLines,
   'skills.txt': skillsLines,
+  'experience.txt': experienceLines,
   'contact.txt': contactLines,
 }
 
@@ -76,6 +85,7 @@ export const COMMANDS = {
   },
   whoami: { description: 'who is Storm?', run: () => ({ lines: whoamiLines() }) },
   skills: { description: "tech I've worked with", run: () => ({ lines: skillsLines() }) },
+  experience: { description: 'where I have worked', run: () => ({ lines: experienceLines() }) },
   projects: { description: 'list my projects', run: () => ({ lines: projectsLines() }) },
   contact: { description: 'ways to reach me', run: () => ({ lines: contactLines() }) },
   ...(profile.cv && {

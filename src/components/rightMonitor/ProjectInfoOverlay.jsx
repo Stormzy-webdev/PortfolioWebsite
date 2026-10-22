@@ -6,6 +6,8 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
     project?.description ||
     'Select a project from the left monitor to load a focused preview on the showcase display.'
   const tech = Array.isArray(project?.tech) ? project.tech : []
+  const links = project?.links || {}
+  const hasPreview = Boolean(project?.previewVideo || project?.previewImage)
 
   return (
     <section className="right-screen-ui" aria-label="Right screen project dashboard">
@@ -25,9 +27,16 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
             <p className="right-screen-ui__footer-desc">{description}</p>
           </div>
 
-          <div className="right-screen-ui__viewport" aria-label="Reserved screen recording viewport">
+          <div className="right-screen-ui__viewport" aria-label="Project preview">
             <div className="right-screen-ui__viewport-glow" aria-hidden="true" />
             <div className="right-screen-ui__viewport-frame" aria-hidden="true" />
+            {/* Until a screen recording is added in projects.js, say so instead of showing an empty box */}
+            {!isIdle && !hasPreview && (
+              <p className="right-screen-ui__viewport-empty">
+                <span className="right-screen-ui__viewport-empty-icon" aria-hidden="true">&#9654;</span>
+                Preview recording coming soon
+              </p>
+            )}
           </div>
         </div>
 
@@ -49,6 +58,29 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
               )}
             </div>
           </div>
+
+          {/* ---------------------------------------------------------------
+              PROJECT LINKS: "View code" (GitHub) and "Live demo" buttons, or
+              a short note (e.g. client work) when there's nothing public.
+              Set these per project in data/projects.js.
+              --------------------------------------------------------------- */}
+          {!isIdle && (links.code || links.live || project?.note) && (
+            <div className="right-screen-ui__links">
+              {links.live && (
+                <a className="right-screen-ui__link right-screen-ui__link--primary" href={links.live} target="_blank" rel="noreferrer">
+                  Live demo
+                </a>
+              )}
+              {links.code && (
+                <a className="right-screen-ui__link" href={links.code} target="_blank" rel="noreferrer">
+                  View code
+                </a>
+              )}
+              {!links.code && !links.live && project?.note && (
+                <p className="right-screen-ui__note">{project.note}</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </section>

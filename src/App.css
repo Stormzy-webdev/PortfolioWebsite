@@ -1231,6 +1231,98 @@ body {
   transform: translateY(-1px);
 }
 
+/* Tab card scrolls when its content (e.g. Experience) is taller than the screen */
+.monitor-card {
+  max-height: calc(100% - 12px);
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding-bottom: 16px;
+  /* soft fade along the bottom edge hints that there's more to scroll */
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 214, 255, 0.45) transparent;
+}
+
+/* About tab paragraphs */
+.monitor-copy--para + .monitor-copy--para {
+  margin-top: 6px;
+}
+
+.monitor-copy--small {
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+/* Skills tab: a small label per group with its skills as tags */
+.monitor-skill-group + .monitor-skill-group {
+  margin-top: 7px;
+}
+
+.monitor-skill-group__label {
+  margin: 0 0 3px;
+  font-family: 'RetroFont', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8fdcff;
+}
+
+.monitor-skill-group__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Skill tags in a plain font: the pixel font is hard to read at this size */
+.monitor-skill-tag {
+  padding: 1px 5px;
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  font-size: 8.5px;
+  color: #e3f4ff;
+  border: 1px solid rgba(124, 214, 255, 0.34);
+  background: rgba(22, 38, 60, 0.6);
+}
+
+/* Experience tab: one block per role */
+.monitor-job {
+  margin-bottom: 9px;
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  color: #edf7ff;
+}
+
+.monitor-job__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+}
+
+.monitor-job__role {
+  font-family: 'RetroFont', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.monitor-job__dates {
+  font-size: 9px;
+  color: rgba(200, 230, 255, 0.7);
+  white-space: nowrap;
+}
+
+.monitor-job__place {
+  margin: 1px 0 3px;
+  font-size: 10px;
+  color: #a9dfff;
+}
+
+.monitor-job__points {
+  margin: 0;
+  padding-left: 14px;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
 /* "Download CV" link in the Contact tab */
 .monitor-cv-link {
   display: inline-block;
@@ -2143,4 +2235,171 @@ body {
     opacity: 0.35;
     transform: scale(0.88);
   }
+}
+
+/* =========================
+   📁 Real project content (right monitor)
+   ========================= */
+
+/* Real project descriptions are a few sentences long: allow 4 lines, not 2 */
+.right-screen-ui__footer-desc {
+  -webkit-line-clamp: 4;
+}
+
+/* "Live demo" / "View code" buttons under the tech stack */
+.right-screen-ui__links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.right-screen-ui__link {
+  display: block;
+  padding: 4px 6px;
+  text-align: center;
+  font-family: 'RetroFont', sans-serif;
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #e9f7ff;
+  border: 1px solid rgba(121, 211, 255, 0.5);
+  background: rgba(8, 16, 30, 0.8);
+  transition: box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.right-screen-ui__link--primary {
+  border-color: rgba(169, 228, 255, 0.8);
+  background: linear-gradient(125deg, rgba(69, 147, 224, 0.75), rgba(119, 97, 236, 0.7));
+}
+
+.right-screen-ui__link:hover,
+.right-screen-ui__link:focus-visible {
+  border-color: rgba(200, 240, 255, 0.95);
+  box-shadow: 0 0 10px rgba(108, 196, 255, 0.5);
+  outline: none;
+}
+
+/* Short note instead of links, e.g. for client work */
+.right-screen-ui__note {
+  margin: 0;
+  padding: 4px 5px;
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  font-size: 6.5px;
+  line-height: 1.35;
+  color: rgba(220, 243, 255, 0.75);
+  border: 1px dashed rgba(121, 211, 255, 0.35);
+}
+
+/* Placeholder in the video window until a screen recording is added */
+.right-screen-ui__viewport-empty {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  font-family: 'RetroFont', sans-serif;
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(200, 235, 255, 0.55);
+}
+
+.right-screen-ui__viewport-empty-icon {
+  font-size: 14px;
+  color: rgba(140, 210, 255, 0.45);
+}
+
+/* =========================
+   📱 Mobile fallback: projects list
+   ========================= */
+.mobile-fallback__section-title {
+  margin: 28px 0 12px;
+  font-family: 'RetroFont', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e7ffe8;
+  text-shadow: 0 0 8px rgba(91, 255, 122, 0.6);
+}
+
+.mobile-project {
+  padding: 14px;
+  border: 1px solid rgba(104, 255, 137, 0.3);
+  background: rgba(2, 10, 8, 0.65);
+}
+
+.mobile-project + .mobile-project {
+  margin-top: 10px;
+}
+
+.mobile-project__title {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #e7ffe8;
+}
+
+.mobile-project__subtitle {
+  margin: 2px 0 8px;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #5bff7a;
+}
+
+.mobile-project__desc {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(214, 255, 223, 0.78);
+}
+
+.mobile-project__tech {
+  margin: 8px 0 0;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  color: rgba(190, 255, 205, 0.6);
+}
+
+.mobile-project__links {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.mobile-project__links a {
+  flex: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: #e7ffe8;
+  border: 1px solid rgba(104, 255, 137, 0.7);
+  background: rgba(2, 10, 8, 0.9);
+}
+
+.mobile-project__links a:active {
+  background: rgba(20, 60, 32, 0.9);
+}
+
+.mobile-project__note {
+  margin: 10px 0 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(190, 255, 205, 0.55);
 }

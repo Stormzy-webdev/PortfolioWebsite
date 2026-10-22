@@ -1,5 +1,6 @@
 import React, { useMemo, useRef } from 'react'
 import { profile } from '../data/profile.js'
+import { about, education, experience, skills } from '../data/content.js'
 
 // Contact line built from data/profile.js (the same details the terminal and
 // the phone screen use), so contact info only ever needs updating in one place.
@@ -12,27 +13,89 @@ const contactBody = [
   .filter(Boolean)
   .join('  |  ')
 
+// Tab titles. The text for each tab comes from data/content.js (About, Skills,
+// Experience), data/projects.js and data/profile.js (Contact).
 const sections = {
-  about: {
-    title: 'About',
-    body: 'Frontend-focused developer crafting immersive web experiences with performant UI systems and polished interaction design.',
-  },
-  projects: {
-    title: 'Projects',
-    body: '',
-  },
-  skills: {
-    title: 'Skills',
-    body: 'Focused on production-ready frontend systems, modern web graphics, and scalable component architecture.',
-  },
-  experience: {
-    title: 'Experience',
-    body: 'Building interactive web products with attention to UX detail, performance, and clean engineering workflows.',
-  },
-  contact: {
-    title: 'Contact',
-    body: contactBody,
-  },
+  about: { title: 'About' },
+  projects: { title: 'Projects' },
+  skills: { title: 'Skills' },
+  experience: { title: 'Experience' },
+  contact: { title: 'Contact' },
+}
+
+// These screens are scaled down in 3D, so a normal mouse-wheel step would
+// scroll far too far. Scroll a small, steady amount instead.
+const WHEEL_SPEED = 0.08
+function scrollGently(event, container) {
+  if (!container) return
+  event.preventDefault()
+  event.stopPropagation()
+  container.scrollTop += event.deltaY * WHEEL_SPEED
+}
+
+// The content of the About / Skills / Experience / Contact tabs.
+function TabBody({ tab }) {
+  if (tab === 'about') {
+    return about.map((paragraph) => (
+      <p className="monitor-copy monitor-copy--para" key={paragraph}>
+        {paragraph}
+      </p>
+    ))
+  }
+
+  if (tab === 'skills') {
+    return skills.map(({ group, items }) => (
+      <div className="monitor-skill-group" key={group}>
+        <p className="monitor-skill-group__label">{group}</p>
+        <div className="monitor-skill-group__items">
+          {items.map((item) => (
+            <span className="monitor-skill-tag" key={item}>
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+
+  if (tab === 'experience') {
+    return (
+      <>
+        {experience.map((job) => (
+          <div className="monitor-job" key={job.role + job.dates}>
+            <p className="monitor-job__head">
+              <span className="monitor-job__role">{job.role}</span>
+              <span className="monitor-job__dates">{job.dates}</span>
+            </p>
+            <p className="monitor-job__place">{job.place}</p>
+            <ul className="monitor-job__points">
+              {job.points.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <p className="monitor-skill-group__label">Education</p>
+        {education.map((entry) => (
+          <p className="monitor-copy monitor-copy--small" key={entry.title}>
+            <strong>{entry.title}</strong> · {entry.place} ({entry.dates})
+          </p>
+        ))}
+      </>
+    )
+  }
+
+  // Contact
+  return (
+    <>
+      <p className="monitor-copy">{contactBody}</p>
+      {profile.cv && (
+        <a className="monitor-cv-link" href={profile.cv} target="_blank" rel="noreferrer">
+          Download CV (PDF)
+        </a>
+      )}
+    </>
+  )
 }
 
 function buildProjectGroups(projects) {
@@ -60,6 +123,7 @@ export default function MonitorUI({
   selectedProjectId,
 }) {
   const projectsScrollRef = useRef(null)
+  const cardScrollRef = useRef(null)
   const active = useMemo(() => sections[activeTab], [activeTab])
   const projectGroups = useMemo(() => buildProjectGroups(projects), [projects])
 
@@ -67,13 +131,7 @@ export default function MonitorUI({
     onTabChange?.(tab)
   }
 
-  const handleProjectsWheel = (event) => {
-    const container = projectsScrollRef.current
-    if (!container) return
-    event.preventDefault()
-    event.stopPropagation()
-    container.scrollTop += event.deltaY * 0.08
-  }
+  const handleProjectsWheel = (event) => scrollGently(event, projectsScrollRef.current)
 
   return (
     <div className={`monitor-ui-panel ${visible ? 'monitor-ui-visible' : ''}`}>
@@ -179,13 +237,12 @@ export default function MonitorUI({
             </div>
           </div>
         ) : (
-          <article className="monitor-card">
-            <p className="monitor-copy">{active.body}</p>
-            {activeTab === 'contact' && profile.cv && (
-              <a className="monitor-cv-link" href={profile.cv} target="_blank" rel="noreferrer">
-                Download CV (PDF)
-              </a>
-            )}
+          <article
+            className="monitor-card"
+            ref={cardScrollRef}
+            onWheel={(event) => scrollGently(event, cardScrollRef.current)}
+          >
+            <TabBody tab={activeTab} />
           </article>
         )}
       </section>

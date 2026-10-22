@@ -1,9 +1,9 @@
 // Shown on the mobile fallback screen. Leave a link as null to hide it.
 export const profile = {
   name: 'Storm Ismail',
-  role: 'Frontend Developer',
+  role: 'Junior Software Engineer',
   intro:
-    'Frontend-focused developer crafting immersive web experiences with performant UI systems and polished interaction design.',
+    'Junior Software Engineer with 2+ years of commercial experience in AR/VR and 3D, now building full-stack web apps with React, Node.js and databases. Fast learner, team lead, and clear communicator.',
   email: 'ismailstorm08@gmail.com',
   github: 'https://github.com/Stormzy-webdev',
   linkedin: 'https://www.linkedin.com/in/storm-ismail-65a2a8221/',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { profile } from '../data/profile.js'
+import { projects } from '../data/projects.js'
 
 export default function MobileFallback() {
   const [shareStatus, setShareStatus] = useState('')
@@ -54,6 +55,39 @@ export default function MobileFallback() {
           )}
         </section>
 
+        {/* -----------------------------------------------------------------
+            PROJECTS: so a recruiter on their phone still sees the work, not
+            just contact details. Same data as the monitors (data/projects.js).
+            ----------------------------------------------------------------- */}
+        <section className="mobile-fallback__projects" aria-label="Projects">
+          <h2 className="mobile-fallback__section-title">Projects</h2>
+          {projects.map((project) => (
+            <article className="mobile-project" key={project.id}>
+              <h3 className="mobile-project__title">{project.title}</h3>
+              <p className="mobile-project__subtitle">{project.subtitle}</p>
+              <p className="mobile-project__desc">{project.description}</p>
+              <p className="mobile-project__tech">{project.tech.join(' · ')}</p>
+              {project.links?.code || project.links?.live ? (
+                <p className="mobile-project__links">
+                  {project.links.live && (
+                    <a href={project.links.live} target="_blank" rel="noreferrer">
+                      Live demo
+                    </a>
+                  )}
+                  {project.links.code && (
+                    <a href={project.links.code} target="_blank" rel="noreferrer">
+                      View code
+                    </a>
+                  )}
+                </p>
+              ) : (
+                project.note && <p className="mobile-project__note">{project.note}</p>
+              )}
+            </article>
+          ))}
+        </section>
+
+        <h2 className="mobile-fallback__section-title">Contact</h2>
         <ul className="mobile-fallback__links">
           {links.map((link) => (
             <li key={link.label}>
