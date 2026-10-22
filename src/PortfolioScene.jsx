@@ -55,8 +55,11 @@ const CAMERA_MOVE_SECONDS = 1.6
 // Portfolio OS menu appears, in milliseconds. See BootSequence.jsx.
 const MONITOR_BOOT_MS = 2200
 
-// While zoomed in, visitors can't drag or scroll the camera around.
-const LOCK_CAMERA_AFTER_ZOOM = true
+// The camera is locked in every view (landing screen included): visitors can't
+// drag, scroll-zoom or pan it, so they never see past the edges of the room.
+// Only the scripted moves in CameraRig (Start, tabs, Exit) move the camera.
+// Set to false to let visitors orbit freely again (handy while tweaking views).
+const LOCK_CAMERA = true
 
 // Starts slowly, speeds up in the middle and settles gently at the end.
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -359,9 +362,9 @@ function PortfolioScene() {
           target={CAMERA_VIEWS.overview.target}
           enableDamping
           dampingFactor={0.05}
-          enablePan={!started || !LOCK_CAMERA_AFTER_ZOOM}
-          enableZoom={!started || !LOCK_CAMERA_AFTER_ZOOM}
-          enableRotate={!started || !LOCK_CAMERA_AFTER_ZOOM}
+          enablePan={!LOCK_CAMERA}
+          enableZoom={!LOCK_CAMERA}
+          enableRotate={!LOCK_CAMERA}
         />
       </Canvas>
       {showMonitorUI && cameraMode === 'projectsOverview' && (
