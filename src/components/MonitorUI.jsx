@@ -13,15 +13,8 @@ const contactBody = [
   .filter(Boolean)
   .join('  |  ')
 
-// Tab titles. The text for each tab comes from data/content.js (About, Skills,
-// Experience), data/projects.js and data/profile.js (Contact).
-const sections = {
-  about: { title: 'About' },
-  projects: { title: 'Projects' },
-  skills: { title: 'Skills' },
-  experience: { title: 'Experience' },
-  contact: { title: 'Contact' },
-}
+// The text for each tab comes from data/content.js (About, Skills, Experience),
+// data/projects.js and data/profile.js (Contact).
 
 // These screens are scaled down in 3D, so a normal mouse-wheel step would
 // scroll far too far. Scroll a small, steady amount instead.
@@ -124,7 +117,6 @@ export default function MonitorUI({
 }) {
   const projectsScrollRef = useRef(null)
   const cardScrollRef = useRef(null)
-  const active = useMemo(() => sections[activeTab], [activeTab])
   const projectGroups = useMemo(() => buildProjectGroups(projects), [projects])
 
   const handleTabChange = (tab) => {
@@ -184,10 +176,7 @@ export default function MonitorUI({
       </div>
 
       <section className="monitor-content">
-        <h3 className="monitor-title" data-text={active.title}>
-          {active.title}
-        </h3>
-
+        {/* No big section heading here: the highlighted tab already says where you are */}
         {activeTab === 'projects' ? (
           <div className="monitor-projects-wrap">
             <div className="monitor-projects-head">

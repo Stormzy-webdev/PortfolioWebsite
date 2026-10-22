@@ -8,7 +8,7 @@
 
 // About tab: a few short paragraphs. Keep it brief, it has to fit on a monitor.
 export const about = [
-  'Junior Software Engineer with over two years of commercial experience at the UWC Innovation Hub, where I progressed from intern to Analyst Programmer and led a team of six.',
+  'Junior Software Developer with over two years of commercial experience at the UWC Innovation Hub, where I progressed from intern to Analyst Programmer and led a team of six.',
   "I've just completed a Full Stack Web Development bootcamp at Zaio Institute of Technology, building apps with React, Node.js, Express, REST APIs and SQL/NoSQL databases.",
   'I learn fast, explain technical work clearly, and want to grow into a well-rounded software engineer, with Java and enterprise development next.',
 ]

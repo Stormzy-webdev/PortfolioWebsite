@@ -22,6 +22,7 @@ import {
   unlockAudio,
 } from './audio/soundEngine.js'
 import { defaultProjectId, projects } from './data/projects.js'
+import { profile } from './data/profile.js'
 
 // ---------------------------------------------------------------------------
 // CAMERA VIEWS
@@ -173,8 +174,6 @@ function PortfolioScene() {
   const cameraMode = activeMonitorTab === 'projects' ? 'projectsOverview' : 'leftMonitor'
   const cameraView = started ? cameraMode : 'overview'
 
-  const selectedProject =
-    projects.find((project) => project.id === selectedProjectId) || projects[0]
   const rightMonitorMode = !showMonitorUI ? 'off' : activeMonitorTab === 'projects' ? 'project' : 'idle'
 
   // Clicking Start is the visitor's first click, which is what browsers need
@@ -285,6 +284,13 @@ function PortfolioScene() {
 
       {sceneReady && !started && (
         <div className="overlay">
+          {/* Who this is, so visitors know whose portfolio it is before clicking anything */}
+          <div className="landing-title">
+            <h1 className="landing-title__name" data-text={profile.name}>
+              {profile.name}
+            </h1>
+            <p className="landing-title__role">{profile.role}</p>
+          </div>
           <button className="start-button" data-text="Start" onClick={handleStart}>
             <span>Start</span>
           </button>
@@ -367,9 +373,6 @@ function PortfolioScene() {
           enableRotate={!LOCK_CAMERA}
         />
       </Canvas>
-      {showMonitorUI && cameraMode === 'projectsOverview' && (
-        <div className="project-preview-hint">Preview selected: {selectedProject?.title}</div>
-      )}
     </div>
   )
 }

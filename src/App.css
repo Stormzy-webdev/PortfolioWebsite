@@ -551,7 +551,8 @@ body {
   flex-direction: column;
   gap: 18px;
 
-  transform: translateY(150px);
+  /* Sits on the empty floor below the desk (scales with screen height) */
+  transform: translateY(22vh);
   z-index: 10;
   /* Covers the whole screen, so let clicks and drags pass through to the 3D
      room (orbiting, the clickable keyboard). Only the Start button catches them. */
@@ -560,6 +561,53 @@ body {
 
 .overlay .start-button {
   pointer-events: auto;
+}
+
+/* Name + job title above the Start button on the landing screen */
+.landing-title {
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadePop 0.9s ease 0.2s forwards;
+}
+
+.landing-title__name {
+  position: relative;
+  margin: 0;
+  font-family: 'RetroFont', sans-serif;
+  font-size: clamp(30px, 4vw, 58px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e7ffe8;
+  text-shadow: 0 0 10px rgba(91, 255, 122, 0.8), 0 0 28px rgba(31, 207, 90, 0.45);
+}
+
+/* faint green copy that glitches over the name, like the Start button */
+.landing-title__name::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: #5bff7a;
+  opacity: 0.3;
+  animation: glitch-left 3.2s steps(2, end) infinite;
+}
+
+.landing-title__role {
+  margin: 8px 0 0;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: clamp(13px, 1.2vw, 17px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #5bff7a;
+  text-shadow: 0 0 8px rgba(91, 255, 122, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-title__name::after {
+    animation: none;
+  }
 }
 
 /* Hint under the Start button pointing at the keyboard Easter egg */
@@ -1233,7 +1281,7 @@ body {
 
 /* Tab card scrolls when its content (e.g. Experience) is taller than the screen */
 .monitor-card {
-  max-height: calc(100% - 12px);
+  max-height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
   padding-bottom: 16px;
@@ -1373,7 +1421,9 @@ body {
 
 .monitor-content {
   position: relative;
-  height: calc(100% - 88px);
+  /* pulled up into the space the old big section heading used to need */
+  margin-top: -12px;
+  height: calc(100% - 74px);
 }
 
 .monitor-content:has(.monitor-projects-wrap) {
@@ -1722,20 +1772,6 @@ body {
   50% { clip-path: inset(44% 0 28% 0); transform: translate(2px, -50%); }
   75% { clip-path: inset(4% 0 80% 0); transform: translate(-2px, -50%); }
   100% { clip-path: inset(58% 0 14% 0); transform: translate(1px, -50%); }
-}
-
-.project-preview-hint {
-  position: fixed;
-  left: 14px;
-  bottom: 14px;
-  z-index: 12;
-  border: 1px solid rgba(98, 255, 135, 0.4);
-  background: rgba(2, 14, 8, 0.9);
-  color: #dfffe7;
-  font-family: 'RetroFont', sans-serif;
-  letter-spacing: 0.04em;
-  text-shadow: 0 0 7px rgba(98, 255, 135, 0.55);
-  padding: 8px 10px;
 }
 
 @keyframes monitor-flicker {
