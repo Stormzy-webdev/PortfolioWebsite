@@ -1,4 +1,5 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
+import { playClick } from '../audio/soundEngine.js'
 import { profile } from '../data/profile.js'
 import { about, education, experience, skills } from '../data/content.js'
 
@@ -91,15 +92,104 @@ function TabBody({ tab }) {
   )
 }
 
-function buildProjectGroups(projects) {
-  const grouped = projects.reduce((acc, project) => {
-    const key = project.category || 'Other'
-    if (!acc[key]) acc[key] = []
-    acc[key].push(project)
-    return acc
-  }, {})
+// ---------------------------------------------------------------------------
+// PROJECT LIST (Projects tab)
+// A compact, scannable list instead of big blocks, so most projects are
+// visible at once:
+//   - Filter pills (All + one per category from projects.js) narrow the list.
+//   - One slim row per project: number, title, a green ▶ when there's a screen
+//     recording, and two tech hints. Full details show on the right monitor.
+//   - Hovering, clicking, Tab or the ↑/↓ arrow keys select a project.
+// ---------------------------------------------------------------------------
+const ALL = 'All'
 
-  return Object.entries(grouped).map(([heading, items]) => ({ heading, items }))
+function ProjectList({ projects, selectedProjectId, onProjectHover, onProjectSelect }) {
+  const [filter, setFilter] = useState(ALL)
+  const listRef = useRef(null)
+
+  // Categories in the order they first appear in projects.js
+  const categories = useMemo(() => [...new Set(projects.map((p) => p.category || 'Other'))], [projects])
+  const visible = filter === ALL ? projects : projects.filter((p) => (p.category || 'Other') === filter)
+
+  const chooseFilter = (next) => {
+    if (next === filter) return
+    playClick()
+    setFilter(next)
+    // Keep the right monitor in step: if the shown project is filtered out,
+    // show the first one in the new list instead.
+    const nextVisible = next === ALL ? projects : projects.filter((p) => (p.category || 'Other') === next)
+    if (nextVisible.length && !nextVisible.some((p) => p.id === selectedProjectId)) onProjectHover?.(nextVisible[0].id)
+    if (listRef.current) listRef.current.scrollTop = 0
+  }
+
+  // ↑/↓ move to the previous/next row. Scrolls only this list (never the
+  // page: these screens are 3D-positioned, so browser scrolling would shift them).
+  const handleKeyDown = (event) => {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
+    const rows = [...listRef.current.querySelectorAll('.plist-row')]
+    const current = rows.indexOf(document.activeElement)
+    const next = rows[Math.min(rows.length - 1, Math.max(0, current + (event.key === 'ArrowDown' ? 1 : -1)))]
+    if (!next) return
+    event.preventDefault()
+    next.focus({ preventScroll: true })
+    const list = listRef.current
+    if (next.offsetTop < list.scrollTop) list.scrollTop = next.offsetTop
+    else if (next.offsetTop + next.offsetHeight > list.scrollTop + list.clientHeight) {
+      list.scrollTop = next.offsetTop + next.offsetHeight - list.clientHeight
+    }
+  }
+
+  return (
+    <div className="monitor-projects-wrap">
+      <div className="plist-filters" role="group" aria-label="Filter projects by category">
+        {[ALL, ...categories].map((name) => (
+          <button
+            key={name}
+            type="button"
+            className={`plist-filter ${filter === name ? 'is-active' : ''}`}
+            aria-pressed={filter === name}
+            onClick={() => chooseFilter(name)}
+          >
+            {name}
+            {name === ALL && <span className="plist-filter__count">{projects.length}</span>}
+          </button>
+        ))}
+      </div>
+
+      <div
+        ref={listRef}
+        className="monitor-projects"
+        aria-label="Projects"
+        onWheel={(event) => scrollGently(event, listRef.current)}
+        onKeyDown={handleKeyDown}
+      >
+        {visible.map((project) => (
+          <button
+            key={project.id}
+            type="button"
+            className={`plist-row ${selectedProjectId === project.id ? 'is-selected' : ''}`}
+            aria-current={selectedProjectId === project.id ? 'true' : undefined}
+            onMouseEnter={() => onProjectHover?.(project.id)}
+            onFocus={() => onProjectHover?.(project.id)}
+            onClick={() => onProjectSelect?.(project.id)}
+          >
+            {/* number stays the same whichever filter is active */}
+            <span className="plist-row__index">{String(projects.indexOf(project) + 1).padStart(2, '0')}</span>
+            <span className="plist-row__title">
+              {project.title}
+              {project.previewVideo && (
+                <span className="plist-row__video" title="Has a screen recording" aria-label="has a screen recording">
+                  &#9654;
+                </span>
+              )}
+            </span>
+            <span className="plist-row__tech">{(project.tech || []).slice(0, 2).join(' · ')}</span>
+          </button>
+        ))}
+        {visible.length === 0 && <p className="plist-empty">No projects in this category yet.</p>}
+      </div>
+    </div>
+  )
 }
 
 // The open tab is owned by PortfolioScene (passed in as activeTab) rather than
@@ -115,15 +205,11 @@ export default function MonitorUI({
   projects = [],
   selectedProjectId,
 }) {
-  const projectsScrollRef = useRef(null)
   const cardScrollRef = useRef(null)
-  const projectGroups = useMemo(() => buildProjectGroups(projects), [projects])
 
   const handleTabChange = (tab) => {
     onTabChange?.(tab)
   }
-
-  const handleProjectsWheel = (event) => scrollGently(event, projectsScrollRef.current)
 
   return (
     <div className={`monitor-ui-panel ${visible ? 'monitor-ui-visible' : ''}`}>
@@ -178,53 +264,12 @@ export default function MonitorUI({
       <section className="monitor-content">
         {/* No big section heading here: the highlighted tab already says where you are */}
         {activeTab === 'projects' ? (
-          <div className="monitor-projects-wrap">
-            <div className="monitor-projects-head">
-              <p className="monitor-projects-head__kicker">Project Catalog</p>
-              <p className="monitor-projects-head__hint">Hover or click to preview on right monitor</p>
-            </div>
-              <div
-                ref={projectsScrollRef}
-                className="monitor-projects"
-                aria-label="Project categories"
-                onWheel={handleProjectsWheel}
-              >
-            {projectGroups.map((group) => (
-              <section className="project-group" key={group.heading}>
-                <h4 className="project-heading">
-                  <span>{group.heading}</span>
-                  <span className="project-heading__count">{group.items.length.toString().padStart(2, '0')}</span>
-                </h4>
-                {group.items.map((project) => (
-                  <button
-                    className={`project-item ${selectedProjectId === project.id ? 'is-selected' : ''}`}
-                    key={project.id}
-                    type="button"
-                    data-text={project.title}
-                    onMouseEnter={() => onProjectHover?.(project.id)}
-                    onFocus={() => onProjectHover?.(project.id)}
-                    onClick={() => onProjectSelect?.(project.id)}
-                  >
-                    <span className="project-item__arrow">{'->'}</span>
-                    <span className="project-item__body">
-                      <span className="project-item__title">{project.title}</span>
-                      {project.subtitle ? <span className="project-item__subtitle">{project.subtitle}</span> : null}
-                      {Array.isArray(project.tech) && project.tech.length ? (
-                        <span className="project-item__tags">
-                          {project.tech.slice(0, 3).map((tag) => (
-                            <span className="project-item__tag" key={`${project.id}-${tag}`}>
-                              {tag}
-                            </span>
-                          ))}
-                        </span>
-                      ) : null}
-                    </span>
-                  </button>
-                ))}
-              </section>
-            ))}
-            </div>
-          </div>
+          <ProjectList
+            projects={projects}
+            selectedProjectId={selectedProjectId}
+            onProjectHover={onProjectHover}
+            onProjectSelect={onProjectSelect}
+          />
         ) : (
           <article
             className="monitor-card"

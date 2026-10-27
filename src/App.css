@@ -1485,293 +1485,181 @@ body {
   text-shadow: 0 0 2px rgba(122, 200, 255, 0.12);
 }
 
+/* =========================
+   📂 Projects tab (left monitor): compact, scannable project list
+   Filter pills on top, then one slim row per project. Rows show an index,
+   the title, a ▶ if there's a screen recording, and two tech hints; the full
+   details live on the right monitor. See the Projects branch in MonitorUI.jsx.
+   ========================= */
 .monitor-projects-wrap {
-  border: 1px solid rgba(123, 211, 255, 0.24);
-  background:
-    linear-gradient(160deg, rgba(8, 19, 33, 0.82), rgba(12, 10, 28, 0.72)),
-    radial-gradient(circle at 100% 0%, rgba(80, 198, 255, 0.14), transparent 54%);
-  padding: 8px;
-  box-shadow: inset 0 0 0 1px rgba(168, 228, 255, 0.08);
   height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-}
-
-.monitor-projects-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.monitor-projects-head__kicker {
-  margin: 0;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #d8f1ff;
-  text-shadow: 0 0 10px rgba(92, 201, 255, 0.34);
-}
-
-.monitor-projects-head__hint {
-  margin: 0;
-  font-size: 10px;
-  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-  color: #c5d8f0;
-  letter-spacing: 0.02em;
-}
-
-.monitor-projects {
-  margin-top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 5px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(137, 214, 255, 0.68) rgba(10, 18, 32, 0.5);
-}
-
-.monitor-projects::-webkit-scrollbar {
-  width: 7px;
-}
-
-.monitor-projects::-webkit-scrollbar-track {
-  border: 1px solid rgba(120, 205, 255, 0.18);
-  background: linear-gradient(180deg, rgba(10, 18, 32, 0.68), rgba(14, 12, 34, 0.64));
-  box-shadow: inset 0 0 8px rgba(92, 170, 255, 0.1);
-}
-
-.monitor-projects::-webkit-scrollbar-thumb {
-  border: 1px solid rgba(167, 227, 255, 0.56);
-  background: linear-gradient(180deg, rgba(107, 196, 255, 0.82), rgba(140, 111, 255, 0.8));
-  box-shadow:
-    0 0 8px rgba(109, 197, 255, 0.38),
-    0 0 14px rgba(164, 113, 255, 0.26);
-}
-
-.monitor-projects::-webkit-scrollbar-thumb:hover {
-  border-color: rgba(198, 238, 255, 0.86);
-  box-shadow:
-    0 0 10px rgba(111, 203, 255, 0.5),
-    0 0 18px rgba(176, 124, 255, 0.38);
-}
-
-.project-group {
-  border: 1px solid rgba(124, 214, 255, 0.22);
-  background:
-    linear-gradient(148deg, rgba(20, 39, 61, 0.58), rgba(18, 16, 44, 0.5)),
-    linear-gradient(90deg, rgba(91, 196, 255, 0.07), transparent 32%);
-  padding: 5px;
-  box-shadow:
-    inset 0 0 0 1px rgba(145, 219, 255, 0.08),
-    0 10px 18px rgba(0, 0, 0, 0.22);
-}
-
-/* Left monitor projects view: category title text */
-.project-heading {
-  margin: 0 0 4px;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-  color: #d2edff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Left monitor projects view: tiny item count text next to heading */
-.project-heading__count {
-  font-size: 8px;
-  color: #9fbdde;
-  letter-spacing: 0.12em;
-}
-
-/* Left monitor projects view: base text style for each clickable project row */
-.project-item {
-  margin: 0 0 3px;
-  border: 1px solid rgba(126, 214, 255, 0.2);
-  background:
-    linear-gradient(130deg, rgba(17, 33, 52, 0.74), rgba(20, 18, 46, 0.7)),
-    linear-gradient(90deg, rgba(88, 190, 255, 0.11), transparent 38%);
-  padding: 4px 6px;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  font-size: 11px;
-  line-height: 1.2;
-  color: #eff8ff;
-  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-  letter-spacing: 0.015em;
-  text-shadow: 0 0 2px rgba(127, 200, 255, 0.14);
-  transition: border-color 180ms ease, color 180ms ease, text-shadow 180ms ease, transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
-  display: flex;
-  align-items: flex-start;
   gap: 6px;
-  isolation: isolate;
-  position: relative;
+  min-height: 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(123, 211, 255, 0.24);
+  background: linear-gradient(160deg, rgba(8, 19, 33, 0.82), rgba(12, 10, 28, 0.72));
+  box-shadow: inset 0 0 0 1px rgba(168, 228, 255, 0.08);
 }
 
-.project-item:last-child {
-  margin-bottom: 0;
-}
-
-.project-item__arrow {
-  color: #9fdcff;
-  font-size: 8px;
-  letter-spacing: 0.1em;
-  margin-top: 1px;
-}
-
-.project-item__body {
-  flex: 1;
-  min-width: 0;
-}
-
-/* Left monitor projects view: project name text */
-.project-item__title {
-  display: block;
-  font-size: 10px;
-  letter-spacing: 0.045em;
-  text-transform: uppercase;
-  color: #f4fbff;
-}
-
-/* Left monitor projects view: short supporting subtitle text */
-.project-item__subtitle {
-  display: block;
-  margin-top: 1px;
-  font-size: 9px;
-  color: #b9cee8;
-}
-
-.project-item__tags {
+/* Filter pills: All / Featured / Full Stack & AI / Frontend */
+.plist-filters {
+  flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
-  margin-top: 3px;
+  gap: 4px;
 }
 
-/* Left monitor projects view: tech tag text under each project */
-.project-item__tag {
-  border: 1px solid rgba(132, 214, 255, 0.33);
-  background: rgba(20, 53, 82, 0.5);
-  color: #d8ecff;
-  font-size: 7px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 1px 4px;
-  line-height: 1.45;
-}
-
-.project-item::before,
-.project-item::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 22px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  opacity: 0;
-  font-size: 11px;
+.plist-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
   font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-  letter-spacing: 0.02em;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #b9d7ef;
+  border: 1px solid rgba(124, 214, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(16, 30, 50, 0.6);
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
 }
 
-.project-item::before {
-  color: rgba(124, 219, 255, 0.75);
-}
-
-.project-item::after {
-  color: rgba(188, 131, 255, 0.65);
-}
-
-.project-item:hover,
-.project-item:focus-visible {
-  color: #f4fbff;
+.plist-filter:hover,
+.plist-filter:focus-visible {
+  color: #f1f9ff;
+  border-color: rgba(162, 229, 255, 0.6);
   outline: none;
-  transform: translateX(2px) translateY(-1px);
-  border-color: rgba(162, 229, 255, 0.56);
-  background:
-    linear-gradient(132deg, rgba(32, 67, 101, 0.82), rgba(41, 33, 86, 0.74)),
-    linear-gradient(90deg, rgba(94, 204, 255, 0.15), transparent 45%);
-  box-shadow:
-    0 0 10px rgba(101, 194, 255, 0.2),
-    0 0 18px rgba(170, 119, 255, 0.1);
 }
 
-.project-item:hover::before,
-.project-item:focus-visible::before {
-  opacity: 0.7;
-  animation: project-glitch-left 450ms steps(2, end) infinite;
+.plist-filter.is-active {
+  color: #ffffff;
+  border-color: rgba(169, 228, 255, 0.75);
+  background: linear-gradient(125deg, rgba(69, 147, 224, 0.75), rgba(119, 97, 236, 0.68));
+  box-shadow: 0 0 8px rgba(108, 196, 255, 0.3);
 }
 
-.project-item:hover::after,
-.project-item:focus-visible::after {
-  opacity: 0.6;
-  animation: project-glitch-right 520ms steps(2, end) infinite;
+.plist-filter__count {
+  padding: 0 4px;
+  font-size: 7.5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
 }
 
-.project-item.is-selected {
-  color: #f4fbff;
-  border-color: rgba(164, 230, 255, 0.8);
-  background:
-    linear-gradient(130deg, rgba(58, 120, 194, 0.76), rgba(91, 74, 186, 0.7)),
-    linear-gradient(90deg, rgba(139, 228, 255, 0.18), transparent 46%);
-  text-shadow:
-    0 0 8px rgba(122, 206, 255, 0.4),
-    0 0 12px rgba(176, 120, 255, 0.24);
-  box-shadow:
-    0 0 10px rgba(101, 194, 255, 0.3),
-    0 0 20px rgba(170, 119, 255, 0.2);
+/* The scrolling list itself */
+.monitor-projects {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(137, 214, 255, 0.5) transparent;
 }
 
-.project-item.is-selected .project-item__subtitle {
-  color: #e4f1ff;
+/* One slim row per project */
+.plist-row {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 6px;
+  width: 100%;
+  min-height: 16px;
+  padding: 2px 6px 2px 8px;
+  box-sizing: border-box;
+  text-align: left;
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  /* one shared line height so number, title and tech hints line up */
+  line-height: 1.25;
+  color: #dcecfa;
+  border: 0;
+  border-bottom: 1px solid rgba(124, 214, 255, 0.1);
+  background: transparent;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease;
 }
 
-.project-item.is-selected .project-item__tag {
-  border-color: rgba(208, 242, 255, 0.55);
-  background: rgba(42, 84, 123, 0.5);
+.plist-row:last-child {
+  border-bottom: 0;
 }
 
-@media (max-width: 820px) {
-  .monitor-projects-head__hint {
-    display: none;
-  }
-
-  .project-item {
-    padding: 5px 7px;
-  }
-
-  .project-item__title {
-    font-size: 10px;
-  }
-
-  .project-item__subtitle {
-    font-size: 9px;
-  }
+.plist-row:hover,
+.plist-row:focus-visible {
+  outline: none;
+  color: #ffffff;
+  background: rgba(120, 190, 255, 0.08);
 }
 
-@keyframes project-glitch-left {
-  0% { clip-path: inset(8% 0 74% 0); transform: translate(-1px, -50%); }
-  25% { clip-path: inset(64% 0 10% 0); transform: translate(1px, -50%); }
-  50% { clip-path: inset(32% 0 40% 0); transform: translate(-2px, -50%); }
-  75% { clip-path: inset(78% 0 2% 0); transform: translate(2px, -50%); }
-  100% { clip-path: inset(10% 0 72% 0); transform: translate(-1px, -50%); }
+/* Selected = the project shown on the right monitor: accent bar + tint */
+.plist-row.is-selected {
+  color: #ffffff;
+  background: linear-gradient(90deg, rgba(72, 150, 230, 0.32), rgba(110, 90, 230, 0.16));
 }
 
-@keyframes project-glitch-right {
-  0% { clip-path: inset(70% 0 6% 0); transform: translate(1px, -50%); }
-  25% { clip-path: inset(16% 0 60% 0); transform: translate(-1px, -50%); }
-  50% { clip-path: inset(44% 0 28% 0); transform: translate(2px, -50%); }
-  75% { clip-path: inset(4% 0 80% 0); transform: translate(-2px, -50%); }
-  100% { clip-path: inset(58% 0 14% 0); transform: translate(1px, -50%); }
+.plist-row.is-selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+  width: 2px;
+  background: #6fd6ff;
+  box-shadow: 0 0 6px rgba(111, 214, 255, 0.8);
+}
+
+.plist-row__index {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 7.5px;
+  color: rgba(160, 205, 240, 0.55);
+}
+
+.plist-row.is-selected .plist-row__index {
+  color: #8fe2ff;
+}
+
+.plist-row__title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.plist-row__title .plist-row__video {
+  margin-left: 5px;
+  font-size: 6.5px;
+  color: #5bff7a;
+  text-shadow: 0 0 5px rgba(91, 255, 122, 0.6);
+  vertical-align: 1px;
+}
+
+.plist-row__tech {
+  align-self: center;
+  line-height: 1.25;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 8px;
+  color: rgba(170, 205, 235, 0.7);
+}
+
+.plist-row.is-selected .plist-row__tech {
+  color: rgba(225, 240, 255, 0.9);
+}
+
+.plist-empty {
+  margin: 8px 0 0;
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  font-size: 9px;
+  color: rgba(185, 215, 240, 0.7);
 }
 
 @keyframes monitor-flicker {
@@ -2505,7 +2393,10 @@ body {
 /* slim title bar (was a taller header with a second line) */
 .rsu__bar {
   flex: 0 0 auto;
-  padding: 4px 7px;
+  /* fixed height so the bar (and the video below) never changes size */
+  height: 20px;
+  box-sizing: border-box;
+  padding: 0 4px 0 7px;
   border: 1px solid rgba(132, 211, 255, 0.22);
   background: linear-gradient(180deg, rgba(19, 41, 68, 0.72), rgba(9, 15, 29, 0.78));
   box-shadow: inset 0 1px 0 rgba(184, 234, 255, 0.18);
@@ -2562,16 +2453,26 @@ body {
   overflow: hidden;
 }
 
+/* Live demo / View code: side by side at the right end of the top bar */
 .rsu__links {
-  flex: 0 0 64px;
+  margin-left: auto;
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
 }
 
 .rsu__links .right-screen-ui__link {
-  padding: 3px 4px;
+  padding: 3px 8px;
   font-size: 6.5px;
+  line-height: 1.2;
+}
+
+/* short note in place of buttons, e.g. "Client project: no public code" */
+.rsu__note {
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  font-size: 6.5px;
+  font-style: italic;
+  color: rgba(200, 230, 255, 0.7);
 }
 
 /* the recording gets all the remaining height and the full width */

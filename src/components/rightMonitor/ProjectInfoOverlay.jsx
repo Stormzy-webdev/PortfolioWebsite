@@ -6,14 +6,18 @@ import React from 'react'
 // The layout is built around the screen recording, which gets as much room as
 // possible:
 //
-//   ┌ PROJECT TERMINAL ───────────────── LIVE ┐  slim title bar
-//   │ TITLE · subtitle             [Live demo] │  compact info bar
-//   │ two-line description         [View code] │
+//   ┌ PROJECT TERMINAL  [Live demo][View code] ┐  slim bar + buttons
+//   │ TITLE · subtitle                         │  compact info bar
+//   │ two-line description                     │  (always the same height)
 //   │ ┌ recording ───────────────────────────┐ │  fills the rest of the
 //   │ │                                      │ │  screen, full width
 //   │ └──────────────────────────────────────┘ │
 //   │ React · Node.js · Express · MongoDB ...  │  tech stack in one row
 //   └──────────────────────────────────────────┘
+//
+// The buttons live in the top bar so the info bar is the same height for
+// every project, which keeps the recording the same size whether a project
+// has one link, two or none.
 //
 // Everything comes from data/projects.js. Styles: .rsu* in App.css.
 // ===========================================================================
@@ -33,21 +37,11 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
       <div className="right-screen-ui__header-bar rsu__bar">
         <span className="right-screen-ui__window-dot" aria-hidden="true" />
         <span className="right-screen-ui__window-title">Project Terminal</span>
-        <span className="right-screen-ui__window-meta">{isIdle ? 'Standby' : 'Live'}</span>
-      </div>
 
-      {/* Title, short description and the Live demo / View code buttons */}
-      <div className="rsu__info">
-        <div className="rsu__text">
-          <h4 className="rsu__title">
-            {title}
-            {project?.subtitle && <span className="rsu__subtitle"> · {project.subtitle}</span>}
-          </h4>
-          <p className="rsu__desc">{description}</p>
-        </div>
-
+        {/* Live demo / View code buttons (or a short note, e.g. client work) */}
         {showLinks && (
           <div className="rsu__links">
+            {!links.code && !links.live && project?.note && <span className="rsu__note">{project.note}</span>}
             {links.live && (
               <a className="right-screen-ui__link right-screen-ui__link--primary" href={links.live} target="_blank" rel="noreferrer">
                 Live demo
@@ -58,9 +52,20 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
                 View code
               </a>
             )}
-            {!links.code && !links.live && project?.note && <p className="right-screen-ui__note">{project.note}</p>}
           </div>
         )}
+      </div>
+
+      {/* Title and short description */}
+      <div className="rsu__info">
+        <div className="rsu__text">
+          <h4 className="rsu__title">
+            {title}
+            {project?.subtitle && <span className="rsu__subtitle"> · {project.subtitle}</span>}
+          </h4>
+          <p className="rsu__desc">{description}</p>
+        </div>
+
       </div>
 
       {/* -------------------------------------------------------------------

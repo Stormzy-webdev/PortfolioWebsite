@@ -27,7 +27,7 @@ export const projects = [
       'My bootcamp capstone: guests search listings, view details and book stays, while hosts manage listings and reservations from their own dashboard. Backed by a REST API with JWT authentication and MongoDB.',
     category: 'Featured',
     tech: ['React', 'Node.js', 'Express', 'MongoDB', 'JWT', 'Cloudinary'],
-    links: { code: `${GITHUB}/airbnb-capstone`, live: null },
+    links: { code: `${GITHUB}/airbnb-capstone`, live: 'https://airbnb-frontend-9obn.onrender.com/' },
     previewVideo: '/videos/airbnb.mp4',
     previewImage: '/images/airbnb.jpg',
   },
