@@ -73,7 +73,10 @@ export default function RightMonitorDisplay({
           geometry={screen.geometry}
           transform={transform}
           selectedProject={selectedProject}
-          isIdle={!showProjectUI}
+          // The 3D screen surface only provides the glow. Recordings play as a
+          // real <video> inside the HTML preview window (ProjectInfoOverlay),
+          // so the surface stays on its idle texture and never loads them.
+          isIdle
           active={isActive}
         />
       ) : null}

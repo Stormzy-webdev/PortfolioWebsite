@@ -40,12 +40,36 @@ const CAMERA_VIEWS = {
   leftMonitor: {
     position: [0.27, 1.01, 0.43],
     target: [-1.02, 1.01, 0.77],
+    fitWidth: 1,
   },
   // Pulled back to frame both monitors (Projects tab + right-screen preview)
   projectsOverview: {
     position: [0.46, 1.02, 0.21],
     target: [-0.08, 1.02, 0.26],
+    // step back 12% so both monitors fit fully with a small margin
+    fitWidth: 1.12,
   },
+}
+
+// ---------------------------------------------------------------------------
+// FIT TO SCREEN SHAPE
+// The views above were designed for a 16:9 window. On narrower windows (16:10
+// laptops, small browser windows) the sides of the monitors would be cut off,
+// so views with `fitWidth` step the camera back along its line of sight until
+// the same width fits. Wider screens keep the designed framing.
+//   fitWidth: 1    = exact designed framing on 16:9
+//   fitWidth: 1.12 = 12% further back (extra margin)
+// Views without fitWidth (the landing overview) are never adjusted.
+// ---------------------------------------------------------------------------
+const DESIGN_ASPECT = 16 / 9
+
+function framedPosition(viewName, aspect) {
+  const view = CAMERA_VIEWS[viewName]
+  const position = new THREE.Vector3(...view.position)
+  if (!view.fitWidth) return position
+  const target = new THREE.Vector3(...view.target)
+  const pullBack = view.fitWidth * Math.max(1, DESIGN_ASPECT / aspect)
+  return target.add(position.sub(target).multiplyScalar(pullBack))
 }
 
 // How long one camera move takes, in seconds. Every move takes the same time,
@@ -87,9 +111,11 @@ function SceneReady({ onReady }) {
 // turns around. When it arrives it calls onArrive(view).
 // ---------------------------------------------------------------------------
 function CameraRig({ controlsRef, view, onArrive }) {
-  const { camera } = useThree()
+  const { camera, size } = useThree()
   const move = useRef(null)
-  const lastView = useRef(view)
+  // Screen shape, rounded so tiny resizes don't trigger a camera move.
+  const aspect = Math.round((size.width / size.height) * 100) / 100
+  const lastPlan = useRef(`${view}|${aspect}`)
 
   // Debug helper: press P to log the current camera position and target.
   useEffect(() => {
@@ -111,8 +137,11 @@ function CameraRig({ controlsRef, view, onArrive }) {
 
   // A new view was requested: plan a move from wherever the camera is now.
   useEffect(() => {
-    if (lastView.current === view) return
-    lastView.current = view
+    // Re-plan when the view changes, or when the window changes shape (so the
+    // monitors re-fit after a resize).
+    const plan = `${view}|${aspect}`
+    if (lastPlan.current === plan) return
+    lastPlan.current = plan
 
     const controls = controlsRef.current
     if (!controls) return
@@ -122,10 +151,10 @@ function CameraRig({ controlsRef, view, onArrive }) {
       elapsed: 0,
       fromPosition: camera.position.clone(),
       fromTarget: controls.target.clone(),
-      toPosition: new THREE.Vector3(...CAMERA_VIEWS[view].position),
+      toPosition: framedPosition(view, aspect),
       toTarget: new THREE.Vector3(...CAMERA_VIEWS[view].target),
     }
-  }, [view, camera, controlsRef])
+  }, [view, aspect, camera, controlsRef])
 
   // Each frame, step the planned move forward a little.
   useFrame((_, delta) => {

@@ -1,5 +1,23 @@
 import React from 'react'
 
+// ===========================================================================
+// RIGHT MONITOR: PROJECT SHOWCASE
+// What the right monitor shows for the project hovered/clicked on the left.
+// The layout is built around the screen recording, which gets as much room as
+// possible:
+//
+//   ┌ PROJECT TERMINAL ───────────────── LIVE ┐  slim title bar
+//   │ TITLE · subtitle             [Live demo] │  compact info bar
+//   │ two-line description         [View code] │
+//   │ ┌ recording ───────────────────────────┐ │  fills the rest of the
+//   │ │                                      │ │  screen, full width
+//   │ └──────────────────────────────────────┘ │
+//   │ React · Node.js · Express · MongoDB ...  │  tech stack in one row
+//   └──────────────────────────────────────────┘
+//
+// Everything comes from data/projects.js. Styles: .rsu* in App.css.
+// ===========================================================================
+
 export default function ProjectInfoOverlay({ project, isIdle = false }) {
   const title = project?.title || 'Project Preview'
   const description =
@@ -8,80 +26,88 @@ export default function ProjectInfoOverlay({ project, isIdle = false }) {
   const tech = Array.isArray(project?.tech) ? project.tech : []
   const links = project?.links || {}
   const hasPreview = Boolean(project?.previewVideo || project?.previewImage)
+  const showLinks = !isIdle && (links.code || links.live || project?.note)
 
   return (
-    <section className="right-screen-ui" aria-label="Right screen project dashboard">
-      <div className="right-screen-ui__header">
-        <div className="right-screen-ui__header-bar">
-          <span className="right-screen-ui__window-dot" aria-hidden="true" />
-          <span className="right-screen-ui__window-title">Project Terminal</span>
-          <span className="right-screen-ui__window-meta">{isIdle ? 'Standby' : 'Live'}</span>
-        </div>
-        <p className="right-screen-ui__header-note">Hovered project details and tech stack</p>
+    <section className="right-screen-ui rsu" aria-label="Right screen project showcase">
+      <div className="right-screen-ui__header-bar rsu__bar">
+        <span className="right-screen-ui__window-dot" aria-hidden="true" />
+        <span className="right-screen-ui__window-title">Project Terminal</span>
+        <span className="right-screen-ui__window-meta">{isIdle ? 'Standby' : 'Live'}</span>
       </div>
 
-      <div className="right-screen-ui__body">
-        <div className="right-screen-ui__footer-main">
-          <div className="right-screen-ui__footer-info">
-            <h4 className="right-screen-ui__footer-title">{title}</h4>
-            <p className="right-screen-ui__footer-desc">{description}</p>
-          </div>
+      {/* Title, short description and the Live demo / View code buttons */}
+      <div className="rsu__info">
+        <div className="rsu__text">
+          <h4 className="rsu__title">
+            {title}
+            {project?.subtitle && <span className="rsu__subtitle"> · {project.subtitle}</span>}
+          </h4>
+          <p className="rsu__desc">{description}</p>
+        </div>
 
-          <div className="right-screen-ui__viewport" aria-label="Project preview">
-            <div className="right-screen-ui__viewport-glow" aria-hidden="true" />
-            <div className="right-screen-ui__viewport-frame" aria-hidden="true" />
-            {/* Until a screen recording is added in projects.js, say so instead of showing an empty box */}
-            {!isIdle && !hasPreview && (
-              <p className="right-screen-ui__viewport-empty">
-                <span className="right-screen-ui__viewport-empty-icon" aria-hidden="true">&#9654;</span>
-                Preview recording coming soon
-              </p>
+        {showLinks && (
+          <div className="rsu__links">
+            {links.live && (
+              <a className="right-screen-ui__link right-screen-ui__link--primary" href={links.live} target="_blank" rel="noreferrer">
+                Live demo
+              </a>
             )}
+            {links.code && (
+              <a className="right-screen-ui__link" href={links.code} target="_blank" rel="noreferrer">
+                View code
+              </a>
+            )}
+            {!links.code && !links.live && project?.note && <p className="right-screen-ui__note">{project.note}</p>}
           </div>
-        </div>
+        )}
+      </div>
 
-        <div className="right-screen-ui__tech-pane">
-          <div className="right-screen-ui__tech-heading-block">
-            <p className="right-screen-ui__section-label">Tech Stack</p>
-          </div>
+      {/* -------------------------------------------------------------------
+          SCREEN RECORDING: the selected project's clip plays here, silent and
+          looping. The poster (thumbnail) shows instantly while it loads, and
+          `key` makes it swap cleanly when the project changes.
+          ------------------------------------------------------------------- */}
+      <div className="right-screen-ui__viewport rsu__viewport" aria-label="Project preview">
+        <div className="right-screen-ui__viewport-glow" aria-hidden="true" />
+        {!isIdle && project?.previewVideo ? (
+          <video
+            key={project.id}
+            className="right-screen-ui__video"
+            src={project.previewVideo}
+            poster={project.previewImage || undefined}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-label={`Screen recording of ${title}`}
+          />
+        ) : !isIdle && project?.previewImage ? (
+          <img key={project.id} className="right-screen-ui__video" src={project.previewImage} alt={`Screenshot of ${title}`} />
+        ) : null}
+        <div className="right-screen-ui__viewport-frame" aria-hidden="true" />
 
-          <div className="right-screen-ui__tech-chips-block">
-            <div className="right-screen-ui__tech">
-              {tech.length > 0 ? (
-                tech.slice(0, 6).map((item) => (
-                  <span className="right-screen-ui__chip" key={item}>
-                    {item}
-                  </span>
-                ))
-              ) : (
-                <span className="right-screen-ui__chip">{isIdle ? 'Awaiting Selection' : 'Preview Ready'}</span>
-              )}
-            </div>
-          </div>
+        {/* Until a screen recording is added in projects.js, say so instead of showing an empty box */}
+        {!isIdle && !hasPreview && (
+          <p className="right-screen-ui__viewport-empty">
+            <span className="right-screen-ui__viewport-empty-icon" aria-hidden="true">&#9654;</span>
+            Preview recording coming soon
+          </p>
+        )}
+      </div>
 
-          {/* ---------------------------------------------------------------
-              PROJECT LINKS: "View code" (GitHub) and "Live demo" buttons, or
-              a short note (e.g. client work) when there's nothing public.
-              Set these per project in data/projects.js.
-              --------------------------------------------------------------- */}
-          {!isIdle && (links.code || links.live || project?.note) && (
-            <div className="right-screen-ui__links">
-              {links.live && (
-                <a className="right-screen-ui__link right-screen-ui__link--primary" href={links.live} target="_blank" rel="noreferrer">
-                  Live demo
-                </a>
-              )}
-              {links.code && (
-                <a className="right-screen-ui__link" href={links.code} target="_blank" rel="noreferrer">
-                  View code
-                </a>
-              )}
-              {!links.code && !links.live && project?.note && (
-                <p className="right-screen-ui__note">{project.note}</p>
-              )}
-            </div>
-          )}
-        </div>
+      {/* Tech stack as one slim row of chips */}
+      <div className="rsu__tech" aria-label="Tech stack">
+        {tech.length > 0 ? (
+          tech.slice(0, 6).map((item) => (
+            <span className="right-screen-ui__chip rsu__chip" key={item}>
+              {item}
+            </span>
+          ))
+        ) : (
+          <span className="right-screen-ui__chip rsu__chip">{isIdle ? 'Awaiting Selection' : 'Preview Ready'}</span>
+        )}
       </div>
     </section>
   )

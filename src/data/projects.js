@@ -28,8 +28,8 @@ export const projects = [
     category: 'Featured',
     tech: ['React', 'Node.js', 'Express', 'MongoDB', 'JWT', 'Cloudinary'],
     links: { code: `${GITHUB}/airbnb-capstone`, live: null },
-    previewVideo: null,
-    previewImage: null,
+    previewVideo: '/videos/airbnb.mp4',
+    previewImage: '/images/airbnb.jpg',
   },
   {
     id: 'robben-island-vr',
@@ -101,8 +101,8 @@ export const projects = [
     category: 'Frontend',
     tech: ['JavaScript', 'HTML', 'CSS', 'localStorage'],
     links: { code: `${GITHUB}/Amazon-Clone`, live: null },
-    previewVideo: null,
-    previewImage: null,
+    previewVideo: '/videos/amazon.mp4',
+    previewImage: '/images/amazon.jpg',
   },
   {
     id: 'google-keep-clone',
@@ -113,8 +113,20 @@ export const projects = [
     category: 'Frontend',
     tech: ['JavaScript', 'HTML', 'CSS'],
     links: { code: `${GITHUB}/GoogleKept`, live: null },
-    previewVideo: null,
-    previewImage: null,
+    previewVideo: '/videos/google-keep.mp4',
+    previewImage: '/images/google-keep.jpg',
+  },
+  {
+    id: 'tictactoe',
+    title: 'TicTacToe',
+    subtitle: 'Two-player React game',
+    description:
+      'A two-player Tic Tac Toe game built in React: custom player names, a running scoreboard of wins and draws, undo and restart, win/draw notifications and sound effects with a mute toggle.',
+    category: 'Frontend',
+    tech: ['React', 'JavaScript', 'Webpack', 'Babel', 'CSS'],
+    links: { code: `${GITHUB}/TicTacToe`, live: null },
+    previewVideo: '/videos/tictactoe.mp4',
+    previewImage: '/images/tictactoe.jpg',
   },
 ]
 

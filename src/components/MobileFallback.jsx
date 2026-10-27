@@ -63,6 +63,20 @@ export default function MobileFallback() {
           <h2 className="mobile-fallback__section-title">Projects</h2>
           {projects.map((project) => (
             <article className="mobile-project" key={project.id}>
+              {/* Thumbnail only (light on data); tapping it opens the recording
+                  in the phone's own video player */}
+              {project.previewImage && (
+                <a
+                  className="mobile-project__media"
+                  href={project.previewVideo || project.previewImage}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={project.previewVideo ? `Watch the ${project.title} recording` : `View ${project.title} screenshot`}
+                >
+                  <img src={project.previewImage} alt="" loading="lazy" />
+                  {project.previewVideo && <span className="mobile-project__play">&#9654; Watch demo</span>}
+                </a>
+              )}
               <h3 className="mobile-project__title">{project.title}</h3>
               <p className="mobile-project__subtitle">{project.subtitle}</p>
               <p className="mobile-project__desc">{project.description}</p>
