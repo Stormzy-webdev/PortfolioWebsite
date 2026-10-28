@@ -12,6 +12,7 @@ import DustParticles from './components/lighting/DustParticles.jsx'
 import LoadingScreen from './components/LoadingScreen.jsx'
 import ExitButton from './components/ExitButton.jsx'
 import SoundToggle from './components/SoundToggle.jsx'
+import AvailabilityBadge from './components/AvailabilityBadge.jsx'
 import {
   isMuted,
   playBoot,
@@ -319,11 +320,16 @@ function PortfolioScene() {
               {profile.name}
             </h1>
             <p className="landing-title__role">{profile.role}</p>
+            <AvailabilityBadge className="availability-badge--landing" />
           </div>
           <button className="start-button" data-text="Start" onClick={handleStart}>
             <span>Start</span>
           </button>
           <p className="start-hint">psst... try clicking the keyboard</p>
+          {/* For recruiters in a hurry or on slow laptops: the 2D version */}
+          <a className="quick-view-link" href="/?view=quick">
+            In a hurry? Quick view without the 3D &rarr;
+          </a>
         </div>
       )}
 

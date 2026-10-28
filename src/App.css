@@ -1,5 +1,5 @@
 /* =========================
-   EXISTING STYLES (UNCHANGED)
+   Fonts and page basics
    ========================= */
 
 @font-face {
@@ -9,201 +9,14 @@
   font-style: normal;
 }
 
-
-/* 🌐 2. Global styles */
 body {
   margin: 0;
   font-family: 'RetroFont', sans-serif;
   background: black;
 }
 
-
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-}
-
-.counter:hover {
-  border-color: var(--accent-border);
-}
-
-.counter:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* NOTE: your nested CSS here is fine if your setup supports it */
-
-.hero {
-  position: relative;
-}
-
-.hero .base,
-.hero .framework,
-.hero .vite {
-  inset-inline: 0;
-  margin: 0 auto;
-}
-
-.hero .base {
-  width: 170px;
-  position: relative;
-  z-index: 0;
-}
-
-.hero .framework,
-.hero .vite {
-  position: absolute;
-}
-
-.hero .framework {
-  z-index: 1;
-  top: 34px;
-  height: 28px;
-  transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg) scale(1.4);
-}
-
-.hero .vite {
-  z-index: 0;
-  top: 107px;
-  height: 26px;
-  width: auto;
-  transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg) scale(0.8);
-}
-
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-}
-
-@media (max-width: 1024px) {
-  #center {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
-}
-
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-}
-
-#next-steps>div {
-  flex: 1 1 0;
-  padding: 32px;
-}
-
-@media (max-width: 1024px) {
-  #next-steps>div {
-    padding: 24px 20px;
-  }
-}
-
-#next-steps .icon {
-  margin-bottom: 16px;
-  width: 22px;
-  height: 22px;
-}
-
-@media (max-width: 1024px) {
-  #next-steps {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-}
-
-@media (max-width: 1024px) {
-  #docs {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-}
-
-#next-steps ul .logo {
-  height: 18px;
-}
-
-#next-steps ul a {
-  color: var(--text-h);
-  font-size: 16px;
-  border-radius: 6px;
-  background: var(--social-bg);
-  display: flex;
-  padding: 6px 12px;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  transition: box-shadow 0.3s;
-}
-
-#next-steps ul a:hover {
-  box-shadow: var(--shadow);
-}
-
-#next-steps ul .button-icon {
-  height: 18px;
-  width: 18px;
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-}
-
-@media (max-width: 1024px) {
-  #spacer {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
-  width: 100%;
-}
-
-.ticks::before,
-.ticks::after {
-  content: '';
-  position: absolute;
-  top: -4.5px;
-  border: 5px solid transparent;
-}
-
-.ticks::before {
-  left: 0;
-  border-left-color: var(--border);
-}
-
-.ticks::after {
-  right: 0;
-  border-right-color: var(--border);
-}
-
 /* =========================
-   🎮 3D PORTFOLIO UI (FIXED)
+   🎮 3D portfolio: scene, loading screen, landing and HUD
    ========================= */
 
 /* 🌐 wrapper for React app + canvas */
@@ -552,7 +365,7 @@ body {
   gap: 18px;
 
   /* Sits on the empty floor below the desk (scales with screen height) */
-  transform: translateY(22vh);
+  transform: translateY(25vh);
   z-index: 10;
   /* Covers the whole screen, so let clicks and drags pass through to the 3D
      room (orbiting, the clickable keyboard). Only the Start button catches them. */
@@ -1006,31 +819,6 @@ body {
   100% { left: 124%; opacity: 0; }
 }
 
-.monitor-ui {
-  position: absolute;
-  top: 34%;
-  left: 17%;
-  width: min(360px, 42vw);
-  padding: 18px 20px;
-  border: 2px solid #3dd800;
-  border-radius: 12px;
-  background: rgba(8, 8, 8, 0.9);
-  color: #e7ffe0;
-  z-index: 15;
-  pointer-events: auto;
-}
-
-.monitor-ui h2 {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-}
-
-.monitor-ui p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 .monitor-screen-shell {
   /* Base frame for the right monitor content area */
   position: relative;
@@ -1430,40 +1218,8 @@ body {
   height: calc(100% - 80px);
 }
 
-/* Left monitor: section title text inside the content area */
-.monitor-title {
-  position: relative;
-  margin: 0 0 6px;
-  font-size: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.monitor-content:has(.monitor-projects-wrap) .monitor-title {
-  display: none;
-}
-
 .monitor-content:has(.monitor-projects-wrap) .monitor-projects-wrap {
   margin-top: 0;
-}
-
-.monitor-title::before,
-.monitor-title::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.35;
-}
-
-.monitor-title::before {
-  color: #9dd9ff;
-  animation: glitch-left 2.8s steps(2, end) infinite;
-}
-
-.monitor-title::after {
-  color: #b987ff;
-  animation: glitch-right 3.1s steps(2, end) infinite;
 }
 
 .monitor-card {
@@ -1750,139 +1506,6 @@ body {
   height: calc(100% - 20px);
 }
 
-.right-screen-ui__header {
-  /* Terminal title bar that sits above the project detail blocks */
-  flex: 0 0 auto;
-  position: relative;
-  padding: 5px 7px 6px;
-  border: 1px solid rgba(132, 211, 255, 0.22);
-  background:
-    linear-gradient(180deg, rgba(19, 41, 68, 0.72), rgba(9, 15, 29, 0.78)),
-    rgba(8, 16, 30, 0.52);
-  box-shadow:
-    inset 0 1px 0 rgba(184, 234, 255, 0.18),
-    inset 0 -1px 0 rgba(159, 123, 255, 0.16);
-}
-
-.right-screen-ui__body {
-  /* Main row: project playback on the left, tech stack aligned on the right. */
-  flex: 1 1 auto;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(70px, 0.45fr);
-  gap: 8px;
-  align-items: start;
-}
-
-.right-screen-ui__footer-main {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-
-.right-screen-ui__footer-info {
-  position: relative;
-  min-width: 0;
-  padding: 7px 8px 6px;
-  border: 1px solid rgba(121, 211, 255, 0.28);
-  background:
-    linear-gradient(160deg, rgba(8, 16, 30, 0.76), rgba(11, 10, 24, 0.66)),
-    rgba(6, 10, 22, 0.52);
-  backdrop-filter: blur(4px);
-  box-shadow:
-    inset 0 1px 0 rgba(183, 233, 255, 0.16),
-    inset 0 -1px 0 rgba(168, 116, 255, 0.16),
-    0 0 14px rgba(80, 160, 255, 0.12);
-}
-
-.right-screen-ui__footer-info::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.12;
-  background:
-    linear-gradient(90deg, transparent 24%, rgba(140, 213, 255, 0.08) 24%, rgba(140, 213, 255, 0.08) 25%, transparent 25%),
-    linear-gradient(0deg, transparent 24%, rgba(140, 213, 255, 0.08) 24%, rgba(140, 213, 255, 0.08) 25%, transparent 25%);
-  background-size: 20px 20px;
-}
-
-.right-screen-ui__details {
-  /* Left block showing the hovered project's title, summary, and description */
-  position: relative;
-  min-height: 0;
-  padding: 7px 8px;
-  border: 1px solid rgba(121, 211, 255, 0.32);
-  background:
-    linear-gradient(160deg, rgba(8, 16, 30, 0.78), rgba(14, 11, 29, 0.66)),
-    rgba(6, 10, 22, 0.54);
-  backdrop-filter: blur(4px);
-  box-shadow:
-    inset 0 1px 0 rgba(183, 233, 255, 0.2),
-    inset 0 -1px 0 rgba(168, 116, 255, 0.2),
-    0 0 18px rgba(80, 160, 255, 0.18);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.right-screen-ui__project-head {
-  position: relative;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid rgba(130, 220, 255, 0.16);
-}
-
-.right-screen-ui__details::before,
-.right-screen-ui__tech-pane::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.16;
-  background:
-    linear-gradient(90deg, transparent 24%, rgba(140, 213, 255, 0.12) 24%, rgba(140, 213, 255, 0.12) 25%, transparent 25%),
-    linear-gradient(0deg, transparent 24%, rgba(140, 213, 255, 0.12) 24%, rgba(140, 213, 255, 0.12) 25%, transparent 25%);
-  background-size: 20px 20px;
-}
-
-.right-screen-ui__tech-pane {
-  /* Right block showing only the tech stack in a tighter layout */
-  position: relative;
-  min-height: 0;
-  /* Reduce this padding to make the tech panel shorter vertically */
-  padding: 5px 6px 5px;
-  align-self: start;
-  height: fit-content;
-  border: 1px solid rgba(121, 211, 255, 0.24);
-  background:
-    linear-gradient(160deg, rgba(8, 16, 30, 0.74), rgba(11, 10, 24, 0.7)),
-    rgba(6, 10, 22, 0.5);
-  backdrop-filter: blur(4px);
-  box-shadow:
-    inset 0 1px 0 rgba(183, 233, 255, 0.16),
-    inset 0 -1px 0 rgba(168, 116, 255, 0.14),
-    0 0 14px rgba(80, 160, 255, 0.12);
-  overflow: hidden;
-}
-
-.right-screen-ui__tech-heading-block {
-  /* Dedicated heading block for the tech stack title */
-  position: relative;
-  padding: 2px 0 6px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(130, 220, 255, 0.18);
-}
-
-.right-screen-ui__tech-chips-block {
-  /* Separate content block below the heading for the tech chips */
-  position: relative;
-  padding-top: 2px;
-}
-
 .right-screen-ui__header,
 .right-screen-ui__header-bar,
 .right-screen-ui__header-note,
@@ -1917,99 +1540,6 @@ body {
   color: #dff6ff;
 }
 
-.right-screen-ui__window-meta {
-  margin-left: auto;
-  font-size: 8px;
-  line-height: 1;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #9fdcff;
-  opacity: 0.95;
-}
-
-.right-screen-ui__header-note {
-  margin: 2px 0 0;
-  font-size: 8px;
-  line-height: 1.05;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(176, 225, 255, 0.76);
-}
-
-.right-screen-ui__section-label {
-  margin: 0;
-  font-size: 8px;
-  line-height: 1;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #00a2ff;
-  text-shadow: 0 0 8px rgba(0, 162, 255, 0.22);
-}
-
-/* Right monitor: project title text */
-.right-screen-ui__title {
-  margin: 2px 0 0;
-  font-size: 9px;
-  line-height: 1.08;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #eff8ff;
-  text-shadow:
-    0 0 8px rgba(132, 211, 255, 0.34),
-    0 0 16px rgba(177, 113, 255, 0.2);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Right monitor: short project summary text under the title */
-.right-screen-ui__summary {
-  margin: 0;
-  font-size: 8px;
-  line-height: 1.15;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #b4e4ff;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Right monitor: short project description paragraph */
-.right-screen-ui__desc {
-  margin: 0;
-  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-  font-size: 8px;
-  line-height: 1.18;
-  color: rgba(220, 243, 255, 0.88);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Right monitor: "Tech Stack" row heading text */
-.right-screen-ui__tech-head {
-  display: none;
-}
-
-.right-screen-ui__status {
-  color: #d6b7ff;
-  text-shadow: 0 0 8px rgba(214, 183, 255, 0.42);
-}
-
-.right-screen-ui__tech {
-  margin-top: 0;
-  display: grid;
-  /* Reduce this if you want the chip list to stay visually smaller inside the tech panel */
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 4px;
-  max-height: none;
-  overflow: hidden;
-}
-
 /* Right monitor: individual tech stack chip text */
 .right-screen-ui__chip {
   border: 1px solid rgba(128, 214, 255, 0.36);
@@ -2032,11 +1562,6 @@ body {
     inset 0 0 0 1px rgba(172, 230, 255, 0.16),
     0 0 8px rgba(97, 184, 255, 0.18);
   transition: border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
-}
-
-.right-screen-ui__tech-pane {
-  /* The whole tech panel can be tightened or expanded here */
-  min-width: 0;
 }
 
 .right-screen-ui__chip:hover {
@@ -2079,23 +1604,6 @@ body {
   background: radial-gradient(circle at 70% 25%, rgba(107, 197, 255, 0.2), rgba(185, 123, 255, 0.08), transparent 62%);
 }
 
-.right-screen-ui__viewport-label {
-  /* Small label floating above the live preview window */
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  z-index: 1;
-  margin: 0;
-  padding: 3px 8px;
-  border: 1px solid rgba(130, 220, 255, 0.34);
-  background: rgba(8, 17, 30, 0.58);
-  color: #d9efff;
-  font-size: 9px;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(90, 186, 255, 0.16);
-}
-
 .right-screen-ui__viewport-frame {
   position: absolute;
   inset: 10px 10px 9px;
@@ -2111,41 +1619,6 @@ body {
     inset 0 -18px 26px rgba(7, 14, 30, 0.18);
 }
 
-.right-screen-ui__footer-title {
-  position: relative;
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.1;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #eff8ff;
-  text-shadow:
-    0 0 8px rgba(132, 211, 255, 0.3),
-    0 0 14px rgba(177, 113, 255, 0.18);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.right-screen-ui__footer-desc {
-  position: relative;
-  margin: 4px 0 0;
-  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-  font-size: 8px;
-  line-height: 1.32;
-  letter-spacing: 0.06em;
-  color: rgba(220, 243, 255, 0.84);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 @keyframes right-monitor-pulse {
   0% {
     opacity: 0.35;
@@ -2159,23 +1632,6 @@ body {
     opacity: 0.35;
     transform: scale(0.88);
   }
-}
-
-/* =========================
-   📁 Real project content (right monitor)
-   ========================= */
-
-/* Real project descriptions are a few sentences long: allow 4 lines, not 2 */
-.right-screen-ui__footer-desc {
-  -webkit-line-clamp: 4;
-}
-
-/* "Live demo" / "View code" buttons under the tech stack */
-.right-screen-ui__links {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 6px;
 }
 
 .right-screen-ui__link {
@@ -2203,17 +1659,6 @@ body {
   border-color: rgba(200, 240, 255, 0.95);
   box-shadow: 0 0 10px rgba(108, 196, 255, 0.5);
   outline: none;
-}
-
-/* Short note instead of links, e.g. for client work */
-.right-screen-ui__note {
-  margin: 0;
-  padding: 4px 5px;
-  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-  font-size: 6.5px;
-  line-height: 1.35;
-  color: rgba(220, 243, 255, 0.75);
-  border: 1px dashed rgba(121, 211, 255, 0.35);
 }
 
 /* Placeholder in the video window until a screen recording is added */
@@ -2504,4 +1949,163 @@ body {
 .rsu__chip {
   flex: 0 0 auto;
   padding: 2px 7px;
+}
+
+/* =========================
+   🟢 Availability badge (AvailabilityBadge.jsx): "● Open to junior roles…"
+   ========================= */
+.availability-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 5px 12px 5px 10px;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #d9ffe1;
+  border-radius: 999px;
+  /* Orbiting light: the border is a cone of colour (faint green all round,
+     with one bright green streak) shown only in the 1px border area, and
+     --badge-spin turns it continuously so the streak travels round the pill. */
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(4, 22, 12, 0.92), rgba(4, 22, 12, 0.92)) padding-box,
+    conic-gradient(
+        from var(--badge-spin),
+        rgba(91, 255, 122, 0.28) 0deg,
+        rgba(91, 255, 122, 0.28) 250deg,
+        rgba(160, 255, 180, 0.95) 320deg,
+        rgba(91, 255, 122, 0.28) 360deg
+      )
+      border-box;
+  box-shadow: 0 0 10px rgba(91, 255, 122, 0.12);
+  animation: badge-orbit 3.2s linear infinite;
+}
+
+/* Lets the browser animate the angle smoothly (older browsers just show a
+   still highlight). */
+@property --badge-spin {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes badge-orbit {
+  to { --badge-spin: 360deg; }
+}
+
+.availability-badge__dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5bff7a;
+  box-shadow: 0 0 0 0 rgba(91, 255, 122, 0.6);
+  animation: availability-pulse 2s ease-out infinite;
+}
+
+@keyframes availability-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(91, 255, 122, 0.6); }
+  70% { box-shadow: 0 0 0 6px rgba(91, 255, 122, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(91, 255, 122, 0); }
+}
+
+/* landing screen: under the job title */
+.availability-badge--landing {
+  margin-top: 12px;
+}
+
+/* About tab on the left monitor (monitor text is laid out small) */
+.availability-badge--monitor {
+  margin-bottom: 7px;
+  padding: 2px 8px 2px 6px;
+  gap: 5px;
+  font-size: 8px;
+}
+
+.availability-badge--monitor .availability-badge__dot {
+  width: 5px;
+  height: 5px;
+}
+
+/* phone version / quick view */
+.availability-badge--page {
+  margin-top: 12px;
+}
+
+/* Visitors who've asked for less motion (e.g. Windows "Animation effects"
+   switched off) still get the orbiting light, just slow and gentle; the
+   pulsing dot stays still for them. */
+@media (prefers-reduced-motion: reduce) {
+  .availability-badge {
+    animation-duration: 9s;
+  }
+
+  .availability-badge__dot {
+    animation: none;
+  }
+}
+
+/* "In a hurry? Quick view" link under the Start hint */
+.quick-view-link {
+  pointer-events: auto;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: rgba(190, 255, 205, 0.55);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(91, 255, 122, 0.35);
+  opacity: 0;
+  animation: fadePop 0.8s ease 1.6s forwards;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.quick-view-link:hover,
+.quick-view-link:focus-visible {
+  color: #d9ffe1;
+  border-bottom-color: rgba(91, 255, 122, 0.8);
+  outline: none;
+}
+
+/* =========================
+   🖥 Quick view (desktop variant of MobileFallback.jsx)
+   Wider page, projects in two columns.
+   ========================= */
+.mobile-fallback--desktop .mobile-fallback__inner {
+  width: min(1040px, 100%);
+}
+
+.mobile-fallback--desktop .mobile-fallback__notice {
+  max-width: 560px;
+}
+
+.mobile-fallback--desktop .mobile-fallback__share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+@media (min-width: 900px) {
+  .mobile-fallback--desktop .mobile-fallback__projects {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+
+  .mobile-fallback--desktop .mobile-fallback__section-title {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  .mobile-fallback--desktop .mobile-project + .mobile-project {
+    margin-top: 0;
+  }
+
+  .mobile-fallback--desktop .mobile-fallback__links {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }

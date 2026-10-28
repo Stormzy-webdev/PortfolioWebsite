@@ -1,8 +1,20 @@
 import React, { useState } from 'react'
 import { profile } from '../data/profile.js'
 import { projects } from '../data/projects.js'
+import AvailabilityBadge from './AvailabilityBadge.jsx'
 
-export default function MobileFallback() {
+// ===========================================================================
+// 2D PORTFOLIO (phone version + desktop "quick view")
+// The whole portfolio as a simple scrolling page, with no 3D:
+//   variant="phone"   phones get this instead of the 3D scene, with a
+//                     "best experienced on desktop" note and a share button
+//   variant="desktop" the "Quick view" for recruiters in a hurry or on slow
+//                     laptops (opened from the landing screen or with
+//                     ?view=quick in the address), with a link back to the 3D
+// Same data as the monitors: data/profile.js and data/projects.js.
+// ===========================================================================
+export default function MobileFallback({ variant = 'phone' }) {
+  const isDesktop = variant === 'desktop'
   const [shareStatus, setShareStatus] = useState('')
 
   const links = [
@@ -27,33 +39,46 @@ export default function MobileFallback() {
   }
 
   return (
-    <main className="mobile-fallback">
+    <main className={`mobile-fallback ${isDesktop ? 'mobile-fallback--desktop' : ''}`}>
       <div className="mobile-fallback__inner">
         <p className="mobile-fallback__kicker">Portfolio OS</p>
         <h1 className="mobile-fallback__name" data-text={profile.name}>
           {profile.name}
         </h1>
         <p className="mobile-fallback__role">{profile.role}</p>
+        <AvailabilityBadge className="availability-badge--page" />
 
         <p className="mobile-fallback__intro">{profile.intro}</p>
 
-        <section className="mobile-fallback__notice" aria-label="Desktop experience">
-          <p className="mobile-fallback__notice-line">
-            <span className="mobile-fallback__prompt">&gt;</span> 3D workstation detected
-          </p>
-          <p className="mobile-fallback__notice-line">
-            <span className="mobile-fallback__prompt">&gt;</span> best experienced on desktop
-            <span className="mobile-fallback__cursor" aria-hidden="true" />
-          </p>
-          <button type="button" className="mobile-fallback__share" onClick={handleSendLink}>
-            Send this link to myself
-          </button>
-          {shareStatus && (
-            <p className="mobile-fallback__share-status" role="status">
-              {shareStatus}
+        {isDesktop ? (
+          <section className="mobile-fallback__notice" aria-label="Quick view">
+            <p className="mobile-fallback__notice-line">
+              <span className="mobile-fallback__prompt">&gt;</span> quick view: everything, without the 3D
+              <span className="mobile-fallback__cursor" aria-hidden="true" />
             </p>
-          )}
-        </section>
+            <a className="mobile-fallback__share" href="/">
+              Open the 3D portfolio
+            </a>
+          </section>
+        ) : (
+          <section className="mobile-fallback__notice" aria-label="Desktop experience">
+            <p className="mobile-fallback__notice-line">
+              <span className="mobile-fallback__prompt">&gt;</span> 3D workstation detected
+            </p>
+            <p className="mobile-fallback__notice-line">
+              <span className="mobile-fallback__prompt">&gt;</span> best experienced on desktop
+              <span className="mobile-fallback__cursor" aria-hidden="true" />
+            </p>
+            <button type="button" className="mobile-fallback__share" onClick={handleSendLink}>
+              Send this link to myself
+            </button>
+            {shareStatus && (
+              <p className="mobile-fallback__share-status" role="status">
+                {shareStatus}
+              </p>
+            )}
+          </section>
+        )}
 
         {/* -----------------------------------------------------------------
             PROJECTS: so a recruiter on their phone still sees the work, not

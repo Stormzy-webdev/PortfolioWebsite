@@ -26,7 +26,11 @@ const link = (label, href) => ({ text: label, href, style: 'link' })
 const blank = () => ({ text: '', style: 'text' })
 
 function whoamiLines() {
-  return [accent(`${profile.name} - ${profile.role}`), text(profile.intro)]
+  return [
+    accent(`${profile.name} - ${profile.role}`),
+    text(profile.intro),
+    ...(profile.availability ? [muted(`Status: ${profile.availability}`)] : []),
+  ]
 }
 
 // Skills come from the same groups as the Skills tab (data/content.js).

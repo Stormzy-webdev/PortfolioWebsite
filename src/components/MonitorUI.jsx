@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { playClick } from '../audio/soundEngine.js'
+import AvailabilityBadge from './AvailabilityBadge.jsx'
 import { profile } from '../data/profile.js'
 import { about, education, experience, skills } from '../data/content.js'
 
@@ -30,11 +31,16 @@ function scrollGently(event, container) {
 // The content of the About / Skills / Experience / Contact tabs.
 function TabBody({ tab }) {
   if (tab === 'about') {
-    return about.map((paragraph) => (
-      <p className="monitor-copy monitor-copy--para" key={paragraph}>
-        {paragraph}
-      </p>
-    ))
+    return (
+      <>
+        <AvailabilityBadge className="availability-badge--monitor" />
+        {about.map((paragraph) => (
+          <p className="monitor-copy monitor-copy--para" key={paragraph}>
+            {paragraph}
+          </p>
+        ))}
+      </>
+    )
   }
 
   if (tab === 'skills') {

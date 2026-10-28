@@ -1,53 +1,73 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
-import ProjectPreview from './ProjectPreview'
+import ScreenGlow from './ScreenGlow'
 import ProjectInfoOverlay from './ProjectInfoOverlay'
+import MatrixRain from '../MatrixRain'
 import { SCREEN_TEXT_ZOOM } from '../screenSharpness'
+
+// ===========================================================================
+// RIGHT MONITOR
+// Puts together the right monitor's screen:
+//   - ScreenGlow: the glowing 3D surface
+//   - an HTML layer on top showing either Matrix rain (before the monitors
+//     boot, or on tabs other than Projects) or the project showcase
+//     (ProjectInfoOverlay) while the Projects tab is open
+// `mode` comes from PortfolioScene: 'off' | 'idle' | 'project'.
+// ===========================================================================
 
 const UI_POSITION = [0, 0.0, 0.001]
 const UI_SCALE = 0.05
 const UI_ROTATION = [0, 1.4, 0]
-const MATRIX_CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*+-<>'
-const MATRIX_COLUMN_COUNT = 18
-
-function MatrixIdle() {
-  const columns = Array.from({ length: MATRIX_COLUMN_COUNT }, (_, i) => {
-    let text = ''
-    for (let j = 0; j < 28; j += 1) {
-      text += MATRIX_CHARS[(i * 7 + j * 11) % MATRIX_CHARS.length]
-    }
-    return { text, delay: (i % 6) * -0.6, duration: 3.2 + (i % 5) * 0.45 }
-  })
-
-  return (
-    <div className="matrix-idle" aria-hidden="true">
-      {columns.map((column, index) => (
-        <span
-          key={index}
-          className="matrix-column"
-          style={{ '--delay': `${column.delay}s`, '--duration': `${column.duration}s` }}
-        >
-          {column.text}
-        </span>
-      ))}
-    </div>
-  )
-}
-
 export default function RightMonitorDisplay({
   screen,
   selectedProject,
   mode = 'off',
   booting = false,
 }) {
-  const resolvedMode = ['project', 'standby', 'idle', 'off'].includes(mode) ? mode : 'idle'
-  const showProjectUI = resolvedMode === 'project'
-  const showStandbyUI = resolvedMode === 'standby'
-  const showIdleMatrix = resolvedMode === 'idle'
-  const showOffMatrix = resolvedMode === 'off'
+  const showProjectUI = mode === 'project'
+  const overlayRef = useRef(null)
+
+  // -------------------------------------------------------------------------
+  // REDRAW SAFETY NET
+  // Chromium browsers (Chrome, Brave, Edge) occasionally skip drawing this
+  // steeply angled 3D-positioned HTML layer and never redraw it, which leaves
+  // the right screen blank. Hiding and re-showing it for one frame makes the
+  // browser rebuild the layer. It runs after the camera has settled on the
+  // Projects view and after the window is resized. If nothing went wrong,
+  // there's no visible change.
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    if (!showProjectUI) return
+
+    const redraw = () => {
+      const el = overlayRef.current
+      if (!el) return
+      el.style.display = 'none'
+      void el.offsetHeight // forces the browser to apply the change now
+      requestAnimationFrame(() => {
+        el.style.display = ''
+      })
+    }
+
+    // the camera move takes about 1.6s, so redraw once it has arrived
+    const timers = [setTimeout(redraw, 1900), setTimeout(redraw, 3500)]
+    let resizeTimer
+    const onResize = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(redraw, 1900)
+    }
+    window.addEventListener('resize', onResize)
+
+    return () => {
+      timers.forEach(clearTimeout)
+      clearTimeout(resizeTimer)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [showProjectUI])
   const isActive = showProjectUI
-  const shouldRenderPreview = showProjectUI || showStandbyUI || showIdleMatrix
+  // The glowing surface only shows once the monitors are on
+  const showGlow = mode === 'project' || mode === 'idle'
 
   const transform = useMemo(() => {
     const screenAspect = (() => {
@@ -68,18 +88,9 @@ export default function RightMonitorDisplay({
 
   return (
     <>
-      {shouldRenderPreview ? (
-        <ProjectPreview
-          geometry={screen.geometry}
-          transform={transform}
-          selectedProject={selectedProject}
-          // The 3D screen surface only provides the glow. Recordings play as a
-          // real <video> inside the HTML preview window (ProjectInfoOverlay),
-          // so the surface stays on its idle texture and never loads them.
-          isIdle
-          active={isActive}
-        />
-      ) : null}
+      {showGlow && (
+        <ScreenGlow geometry={screen.geometry} transform={transform} active={isActive} refreshKey={selectedProject?.id} />
+      )}
 
       <mesh
         geometry={screen.geometry}
@@ -93,18 +104,14 @@ export default function RightMonitorDisplay({
       <group position={transform.position} rotation={transform.rotation} scale={transform.scale}>
         {/* laid out bigger + scaled down = sharper text (see screenSharpness.js) */}
         <Html transform position={UI_POSITION} rotation={UI_ROTATION} scale={UI_SCALE / SCREEN_TEXT_ZOOM}>
-          <div className={`right-monitor-overlay ${isActive ? 'is-active' : ''}`} style={{ zoom: SCREEN_TEXT_ZOOM }}>
+          <div
+            ref={overlayRef}
+            className={`right-monitor-overlay ${isActive ? 'is-active' : ''}`}
+            style={{ zoom: SCREEN_TEXT_ZOOM }}
+          >
             <div className="right-monitor-overlay__scan" />
             {booting && <div className="monitor-boot-flicker" aria-hidden="true" />}
-            {showOffMatrix || showIdleMatrix ? (
-              <MatrixIdle />
-            ) : showStandbyUI ? (
-              <ProjectInfoOverlay project={selectedProject} isIdle />
-            ) : showProjectUI ? (
-              <>
-                <ProjectInfoOverlay project={selectedProject} isIdle={false} />
-              </>
-            ) : null}
+            {showProjectUI ? <ProjectInfoOverlay project={selectedProject} /> : <MatrixRain />}
           </div>
         </Html>
       </group>
