@@ -36,9 +36,9 @@ export const projects = [
     title: 'Robben Island Museum VR',
     subtitle: 'Client work at UWC Innovation Hub',
     description:
-      'Contributed to a large-scale VR experience for the Robben Island Museum, a heritage site with over 300,000 visitors a year. I designed and built an interactive 3D coin reward that visitors unlock by completing tasks.',
+      'A VR experience for the Robben Island Museum (300,000+ visitors a year). I photographed and 3D-scanned Jetty 1, co-designed and storyboarded the gameplay, synced its audio and video, built the 3D coin reward, and ran headset demos with the museum team.',
     category: 'Featured',
-    tech: ['Unity', 'VR', 'Blender', '3D modelling'],
+    tech: ['Unity', 'VR', 'Twinmotion', '3D scanning', 'Blender'],
     links: { code: null, live: null },
     note: 'Client project: no public code or demo.',
     previewVideo: null,

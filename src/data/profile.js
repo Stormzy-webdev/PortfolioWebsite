@@ -6,9 +6,9 @@
 // ===========================================================================
 export const profile = {
   name: 'Storm Ismail',
-  role: 'Junior Software Developer',
+  role: 'Junior Full Stack Developer',
   intro:
-    'Junior Software Developer with 2+ years of commercial experience in AR/VR and 3D, now building full-stack web apps with React, Node.js and databases. Fast learner, team lead, and clear communicator.',
+    'Junior full-stack developer with three years of AR/VR and 3D work at the UWC Innovation Hub, now building and deploying full-stack apps with React, Node.js, Express and MongoDB, plus AI tools with Python and FastAPI.',
   // Availability badge (green dot) shown on the landing screen, the About tab,
   // the quick view and the phone version. Set to null to hide it everywhere
   // (e.g. once you've landed a job).
