@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useMemo } from 'react'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import ScreenGlow from './ScreenGlow'
 import ProjectInfoOverlay from './ProjectInfoOverlay'
 import MatrixRain from '../MatrixRain'
 import { SCREEN_TEXT_ZOOM } from '../screenSharpness'
+import { screenDepthFixRef } from '../screenDepthFix'
 
 // ===========================================================================
 // RIGHT MONITOR
@@ -26,45 +27,6 @@ export default function RightMonitorDisplay({
   booting = false,
 }) {
   const showProjectUI = mode === 'project'
-  const overlayRef = useRef(null)
-
-  // -------------------------------------------------------------------------
-  // REDRAW SAFETY NET
-  // Chromium browsers (Chrome, Brave, Edge) occasionally skip drawing this
-  // steeply angled 3D-positioned HTML layer and never redraw it, which leaves
-  // the right screen blank. Hiding and re-showing it for one frame makes the
-  // browser rebuild the layer. It runs after the camera has settled on the
-  // Projects view and after the window is resized. If nothing went wrong,
-  // there's no visible change.
-  // -------------------------------------------------------------------------
-  useEffect(() => {
-    if (!showProjectUI) return
-
-    const redraw = () => {
-      const el = overlayRef.current
-      if (!el) return
-      el.style.display = 'none'
-      void el.offsetHeight // forces the browser to apply the change now
-      requestAnimationFrame(() => {
-        el.style.display = ''
-      })
-    }
-
-    // the camera move takes about 1.6s, so redraw once it has arrived
-    const timers = [setTimeout(redraw, 1900), setTimeout(redraw, 3500)]
-    let resizeTimer
-    const onResize = () => {
-      clearTimeout(resizeTimer)
-      resizeTimer = setTimeout(redraw, 1900)
-    }
-    window.addEventListener('resize', onResize)
-
-    return () => {
-      timers.forEach(clearTimeout)
-      clearTimeout(resizeTimer)
-      window.removeEventListener('resize', onResize)
-    }
-  }, [showProjectUI])
   const isActive = showProjectUI
   // The glowing surface only shows once the monitors are on
   const showGlow = mode === 'project' || mode === 'idle'
@@ -105,7 +67,8 @@ export default function RightMonitorDisplay({
         {/* laid out bigger + scaled down = sharper text (see screenSharpness.js) */}
         <Html transform position={UI_POSITION} rotation={UI_ROTATION} scale={UI_SCALE / SCREEN_TEXT_ZOOM}>
           <div
-            ref={overlayRef}
+            // keeps Chromium from dropping this steeply angled screen (see screenDepthFix.js)
+            ref={screenDepthFixRef}
             className={`right-monitor-overlay ${isActive ? 'is-active' : ''}`}
             style={{ zoom: SCREEN_TEXT_ZOOM }}
           >
